@@ -22,6 +22,10 @@ export const validation = {
     requiredError: "שדה אימות סיסמא הוא שדה חובה",
     regex: /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/,
     regexError: "שדה סיסמא מכיל לפחות 8 תווים, ספרה אחת ואות אחת באנגלית בלבד",
+    funcValidation(password, confirmPassword) {
+      return password !== confirmPassword;
+    },
+    customError: "סיסמא לא תואמת",
   },
 
   owners: {
@@ -54,10 +58,7 @@ export const validation = {
   file: {
     required: false,
     funcValidation(value) {
-      if (value.files.length > 5) {
-        return true;
-      }
-      return false;
+      return value.length > 5;
     },
     customError: "ניתן לעלות מקסימום 5 תמונות",
   },

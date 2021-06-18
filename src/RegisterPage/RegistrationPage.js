@@ -27,16 +27,40 @@ export default function Registration() {
       isValid: true,
       errors: [],
     },
+    chooseCategory: {
+      value: [],
+      isValid: true,
+      errors: [],
+    },
   });
   const inputOnBlur = validationFunc(
     inputsValues,
     setInputsValues,
     setisDisabled
   );
+  function updateCheckBoxSelected(checkBoxInput) {
+    if (checkBoxInput.checked) {
+      inputsValues.chooseCategory.value.push(checkBoxInput.id);
+    } else {
+      inputsValues.chooseCategory.value =
+        inputsValues.chooseCategory.value.filter(
+          (value) => value !== checkBoxInput.id
+        );
+    }
+    console.log(inputsValues.chooseCategory.value);
+  }
+  function onsubmit(e) {
+    const fieldsData = {};
+    e.preventDefault();
+    for (const key in inputsValues) {
+      fieldsData[key] = inputsValues[key].value;
+    }
+    console.log(fieldsData);
+  }
   const changeInput = inputOnChange(inputsValues, setInputsValues);
   return (
     <Container fluid>
-      <Form className="form-register">
+      <Form className="form-register" onSubmit={(e) => onsubmit(e)}>
         <h3 className="mb-4">הירשם לאתר</h3>
         <InputTextInLine
           labelText="שם משתמש"
@@ -91,6 +115,8 @@ export default function Registration() {
         <CheckBoxGroup
           labelText="הצג לי מודעות"
           checkboxsValuesArr={["רכבים פרטיים", "גיפים", "אופנועים"]}
+          name="chooseCategory"
+          onChecked={updateCheckBoxSelected}
         />
 
         <Button variant="primary" type="submit" disabled={isDisabled}>

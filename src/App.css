@@ -143,6 +143,24 @@ header .form-check-label {
   max-width: 1200px;
   margin: 0 auto;
 }
+.list-cietis .list-group-item {
+  padding: 5px 0px;
+  padding-right: 11px;
+}
+.city-container {
+  position: relative;
+}
+.list-cietis {
+  position: absolute;
+  width: 100%;
+}
+
+.city-field {
+  margin-bottom: 0px;
+}
+.list-group {
+  margin: 0px;
+}
 
 .form-register {
   max-width: 750px;

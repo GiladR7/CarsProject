@@ -1,4 +1,5 @@
 import { validation } from "../utilities/validationObj";
+import { getCities } from "../DAL/api";
 export function validationFunc(inputsValues, setInputsValues, setisDisabled) {
   return ({ name, value }) => {
     const errors = [];
@@ -13,15 +14,9 @@ export function validationFunc(inputsValues, setInputsValues, setisDisabled) {
       isValid = false;
     }
 
-    if (name === "confirmPassword") {
-      if (value !== inputsValues.password.value) {
-        isValid = false;
-        errors.push("סיסמא לא תואמת");
-      }
-    }
     if (
       validation[name].funcValidation &&
-      validation[name].funcValidation(value)
+      validation[name].funcValidation(value, inputsValues?.password?.value)
     ) {
       isValid = false;
       errors.push(validation[name].customError);
@@ -29,7 +24,6 @@ export function validationFunc(inputsValues, setInputsValues, setisDisabled) {
     if (name === "file") {
       value = value.files;
     }
-
     inputsValues[name].isValid = isValid;
     inputsValues[name].errors = errors;
     inputsValues[name].value = value;
@@ -56,10 +50,11 @@ function canSubmit(inputsValues, setisDisabled) {
 
 export function inputOnChange(inputsValues, setInputsValues, setBtnDisable) {
   return ({ value, name }) => {
-    // if (setBtnDisable) {
-    //   value ? setBtnDisable(false) : setBtnDisable(true);
-    // }
     inputsValues[name].value = value;
+    if (name === "city") {
+      getCities(value, inputsValues, setInputsValues);
+      setBtnDisable(true);
+    }
     setInputsValues({
       ...inputsValues,
     });

@@ -8,27 +8,26 @@ export default function InputText({
   value,
   inputOnChange,
   valid,
-  validationFunc,
   errors,
   name,
   updateLocal,
+  className = "",
+  autocomplete = "",
 }) {
   return (
-    <Form.Group controlId={htmlFor}>
+    <Form.Group className={className} controlId={htmlFor}>
       <Form.Label>{labelText}</Form.Label>
       <InputGroup hasValidation>
         <Form.Control
+          autoComplete={autocomplete}
           type={inputType}
           placeholder={placeholderText}
           isInvalid={!valid}
           value={value}
           name={name}
           onChange={(e) => {
-            inputOnChange(e.target);
-          }}
-          onBlur={(e) => {
-            const isDisabled = validationFunc(e.target);
-            updateLocal = updateLocal ? updateLocal(isDisabled) : null;
+            const isDisabled = inputOnChange(e.target);
+            updateLocal(isDisabled === undefined ? true : isDisabled);
           }}
         />
         <Form.Control.Feedback

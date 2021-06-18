@@ -1,4 +1,4 @@
-import { Container, Form, Button, Col, Row } from "react-bootstrap";
+import { Container, Form, Button, Col, Row, ListGroup } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEdit } from "@fortawesome/free-solid-svg-icons";
 import { Link, useHistory } from "react-router-dom";
@@ -7,8 +7,9 @@ import InputText from "../Components/InputText";
 import SelectInput from "../Components/SelectInput";
 import PhoneInput from "../Components/PhoneInput";
 import DateInput from "../Components/DateInput";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { validationFunc, inputOnChange } from "../utilities/validationsFunc";
+
 import {
   getItemLocal,
   updateLocalStorege,
@@ -67,6 +68,7 @@ export default function AddCarParse2() {
           value: "",
           isValid: true,
           errors: [],
+          cities: [],
         },
         moreDetails: {
           value: "",
@@ -77,7 +79,14 @@ export default function AddCarParse2() {
       setIsDisable
     );
   });
-
+  useEffect(() => {
+    if (
+      !localStorage.getItem("adCarData") ||
+      JSON.parse(localStorage.getItem("adCarData")).isDisabled
+    ) {
+      histoy.push("add-new-car");
+    }
+  });
   const updateLocal = updateLocalStorege(
     "canSubmit",
     "adCarData",
@@ -92,7 +101,11 @@ export default function AddCarParse2() {
     setInputsValues,
     setIsDisable
   );
-  const changeInput = inputOnChange(inputsValues, setInputsValues);
+  const changeInput = inputOnChange(
+    inputsValues,
+    setInputsValues,
+    setIsDisable
+  );
   function onsubmit(e) {
     e.preventDefault();
     console.log(JSON.parse(localStorage.getItem("adCarData")));
@@ -175,8 +188,11 @@ export default function AddCarParse2() {
                 id="validationFormik107"
                 placeholder="בחר קובץ"
                 onChange={(e) => {
-                  validationInput({ value: e.target, name: "file" });
-                  updateLocal();
+                  const isDisable = validationInput({
+                    value: e.target.files,
+                    name: "file",
+                  });
+                  updateLocal(isDisable);
                 }}
               />
               <Form.Control.Feedback
@@ -213,29 +229,51 @@ export default function AddCarParse2() {
               inputType="text"
               placeholderText="הכנס את צבע הרכב"
               value={inputsValues.color.value}
-              inputOnChange={changeInput}
+              inputOnChange={validationInput}
               valid={inputsValues.color.isValid}
-              validationFunc={validationInput}
               errors={inputsValues.color.errors}
               name="color"
               updateLocal={updateLocal}
             />
           </Col>
           <Col md="6">
-            <InputText
-              htmlFor="city"
-              labelText="עיר מגורים"
-              maxTextLength="12"
-              inputType="text"
-              placeholderText="הכנס עיר מגורים"
-              value={inputsValues.city.value}
-              inputOnChange={changeInput}
-              valid={inputsValues.city.isValid}
-              validationFunc={validationInput}
-              errors={inputsValues.city.errors}
-              name="city"
-              updateLocal={updateLocal}
-            />
+            <div className="city-container">
+              <InputText
+                htmlFor="city"
+                labelText="עיר מגורים"
+                maxTextLength="12"
+                inputType="text"
+                placeholderText={"הכנס עיר מגורים"}
+                value={inputsValues.city.value}
+                inputOnChange={changeInput}
+                valid={inputsValues.city.isValid}
+                errors={inputsValues.city.errors}
+                name="city"
+                autocomplete="off"
+                updateLocal={updateLocal}
+                className="city-field"
+              />
+              <ListGroup className="list-cietis">
+                {inputsValues.city.cities.map((city, index) => {
+                  return (
+                    <ListGroup.Item
+                      key={index}
+                      onClick={() => {
+                        inputsValues.city.cities = [];
+                        const isDisabled = validationInput({
+                          name: "city",
+                          value: city,
+                        });
+
+                        updateLocal(isDisabled);
+                      }}
+                    >
+                      {city}
+                    </ListGroup.Item>
+                  );
+                })}
+              </ListGroup>
+            </div>
           </Col>
         </Row>
         <TextArea

@@ -4,6 +4,8 @@ export default function CheckBoxGroup({
   labelText,
   checkboxsValuesArr,
   inline = true,
+  name,
+  onChecked,
 }) {
   return (
     <Form.Group>
@@ -13,9 +15,10 @@ export default function CheckBoxGroup({
           <Form.Check
             custom
             key={index}
-            name="chooseCategory"
+            name={name}
             inline={inline}
             label={value}
+            onClick={(e) => onChecked(e.target)}
             type="checkbox"
             id={value}
           />

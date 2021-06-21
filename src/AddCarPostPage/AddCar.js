@@ -18,8 +18,14 @@ import {
 } from "../utilities/localStoregeFunc";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useHistory } from "react-router";
-import { categorys } from "../DAL/api";
-import { useState } from "react";
+import { getCategories, categorys, getManufacturer } from "../DAL/api";
+import { useEffect, useState } from "react";
+
+const iconsCategories = {
+  "ג'יפ": faTruckPickup,
+  "רכב פרטי": faCarSide,
+  אופנוע: faMotorcycle,
+};
 export default function AddCarParse1() {
   const [btnDisable, setBtnDidable] = useState(true);
   const [inputValues, setInputValues] = useState(() => {
@@ -45,7 +51,7 @@ export default function AddCarParse1() {
       setBtnDidable
     );
   });
-
+  const [selectCategories, setSelectCategories] = useState([]);
   const histoy = useHistory();
   const updateLocal = updateLocalStorege(
     "isDisabled",
@@ -53,53 +59,24 @@ export default function AddCarParse1() {
     "carSelected",
     inputValues
   );
+  useEffect(() => {
+    getCategories().then((categoreis) => setSelectCategories([...categoreis]));
+  }, []);
   function changeCatgory({ name, value }) {
-    let selectList;
     let isDisabled = false;
     let btnIsDisabled = false;
     let changeSelectOf = "";
     if (name === "cartype") {
-      selectList = categorys[value].map(({ manufactuer }) => {
-        return manufactuer;
+      getManufacturer(value).then((selectManufacturer) => {
+        inputValues.manufactur.selectList = selectManufacturer;
+        inputValues.manufactur.isDisabled = false;
+
+        setInputValues({ ...inputValues });
       });
-      if (!inputValues.model.isDisabled) {
-        inputValues.model.isDisabled = true;
-        inputValues.model.value = "";
-        inputValues.manufactur.value = "";
-      }
-      selectList = new Set(selectList);
-      selectList = [...selectList];
-
       changeSelectOf = "manufactur";
-    } else if (name === "manufactur") {
-      selectList = categorys[inputValues.cartype.value]
-        .filter(({ manufactuer }) => {
-          return manufactuer === value;
-        })
-        .map(({ model }) => {
-          return model;
-        });
-      changeSelectOf = "model";
-
-      if (!value) {
-        isDisabled = true;
-        inputValues.model.value = "";
-      }
     }
+
     inputValues[name].value = value;
-    for (const key in inputValues) {
-      if (!inputValues[key].value) {
-        btnIsDisabled = true;
-      }
-      setBtnDidable(btnIsDisabled);
-    }
-
-    if (changeSelectOf) {
-      inputValues[changeSelectOf].selectList = selectList;
-      inputValues[changeSelectOf].isDisabled = isDisabled;
-    }
-
-    updateLocal(btnIsDisabled);
 
     setInputValues({
       ...inputValues,
@@ -121,20 +98,14 @@ export default function AddCarParse1() {
             name="cartype"
             onChange={(value) => changeCatgory({ value, name: "cartype" })}
           >
-            <ToggleButton value="רכב פרטי" className="type-car">
-              רכב פרטי
-              <FontAwesomeIcon icon={faCarSide} />{" "}
-            </ToggleButton>
-
-            <ToggleButton value="גיפ" className="type-car">
-              גיפ
-              <FontAwesomeIcon icon={faTruckPickup} />
-            </ToggleButton>
-
-            <ToggleButton value="אופנוע" className="type-car">
-              אופנוע
-              <FontAwesomeIcon icon={faMotorcycle} />{" "}
-            </ToggleButton>
+            {selectCategories.map(({ categoryID, categoryName }) => {
+              return (
+                <ToggleButton value={categoryID} className="type-car">
+                  {categoryName}
+                  <FontAwesomeIcon icon={iconsCategories[categoryName]} />{" "}
+                </ToggleButton>
+              );
+            })}
           </ToggleButtonGroup>
         </Form.Group>
         <SelectInput
@@ -144,6 +115,8 @@ export default function AddCarParse1() {
           showByDefault={["", "בחר את יצרן הרכב"]}
           optionSelect={inputValues.manufactur.selectList}
           isDisabled={inputValues.manufactur.isDisabled}
+          valueKey="manufacturerID"
+          textKey="manufacturerName"
           inputChange={changeCatgory}
         />
         <SelectInput

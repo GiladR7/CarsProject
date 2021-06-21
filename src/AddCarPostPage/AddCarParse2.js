@@ -15,9 +15,10 @@ import {
   updateLocalStorege,
 } from "../utilities/localStoregeFunc";
 import InputNumber from "../Components/InputNumber";
+
 export default function AddCarParse2() {
   const [isDisable, setIsDisable] = useState(true);
-
+  const [chooseCategory, setChooseCategory] = useState("");
   const [inputsValues, setInputsValues] = useState(() => {
     return getItemLocal(
       "adCarData",
@@ -79,12 +80,21 @@ export default function AddCarParse2() {
       setIsDisable
     );
   });
+
   useEffect(() => {
     if (
       !localStorage.getItem("adCarData") ||
       JSON.parse(localStorage.getItem("adCarData")).isDisabled
     ) {
       histoy.push("add-new-car");
+    } else {
+      const {
+        carSelected: {
+          cartype: { value },
+        },
+      } = JSON.parse(localStorage.getItem("adCarData"));
+
+      setChooseCategory(value);
     }
   });
   const updateLocal = updateLocalStorege(
@@ -99,7 +109,8 @@ export default function AddCarParse2() {
   const validationInput = validationFunc(
     inputsValues,
     setInputsValues,
-    setIsDisable
+    setIsDisable,
+    chooseCategory
   );
   const changeInput = inputOnChange(
     inputsValues,
@@ -161,17 +172,44 @@ export default function AddCarParse2() {
             />
           </Col>
           <Col md="6">
-            <SelectInput
-              htmlFor="gear"
-              textLable="סוג תיבת הילוכים"
-              showByDefault={["", "בחר סוג תיבה"]}
-              optionSelect={["ידני", "חשמלי", "אוטומטי"]}
-              inputChange={validationInput}
-              value={inputsValues.gear.value}
-              errors={inputsValues.gear.errors}
-              valid={inputsValues.gear.isValid}
-              updateLocal={updateLocal}
-            />
+            <div className="city-container">
+              <InputText
+                htmlFor="city"
+                labelText="עיר מגורים"
+                maxTextLength="12"
+                inputType="text"
+                placeholderText={"הכנס עיר מגורים"}
+                value={inputsValues.city.value}
+                inputOnChange={changeInput}
+                valid={inputsValues.city.isValid}
+                errors={inputsValues.city.errors}
+                name="city"
+                autocomplete="off"
+                updateLocal={updateLocal}
+                className="city-field"
+              />
+              <ListGroup className="list-cietis">
+                {inputsValues.city.cities.map((city, index) => {
+                  return (
+                    <ListGroup.Item
+                      key={index}
+                      onClick={() => {
+                        inputsValues.city.cities = [];
+                        inputsValues.city.errors = [];
+                        const isDisabled = validationInput({
+                          name: "city",
+                          value: city,
+                        });
+
+                        updateLocal(isDisabled);
+                      }}
+                    >
+                      {city}
+                    </ListGroup.Item>
+                  );
+                })}
+              </ListGroup>
+            </div>
           </Col>
         </Row>
         <Row>
@@ -237,43 +275,19 @@ export default function AddCarParse2() {
             />
           </Col>
           <Col md="6">
-            <div className="city-container">
-              <InputText
-                htmlFor="city"
-                labelText="עיר מגורים"
-                maxTextLength="12"
-                inputType="text"
-                placeholderText={"הכנס עיר מגורים"}
-                value={inputsValues.city.value}
-                inputOnChange={changeInput}
-                valid={inputsValues.city.isValid}
-                errors={inputsValues.city.errors}
-                name="city"
-                autocomplete="off"
+            {chooseCategory !== "אופנוע" && (
+              <SelectInput
+                htmlFor="gear"
+                textLable="סוג תיבת הילוכים"
+                showByDefault={["", "בחר סוג תיבה"]}
+                optionSelect={["ידני", "חשמלי", "אוטומטי"]}
+                inputChange={validationInput}
+                value={inputsValues.gear.value}
+                errors={inputsValues.gear.errors}
+                valid={inputsValues.gear.isValid}
                 updateLocal={updateLocal}
-                className="city-field"
               />
-              <ListGroup className="list-cietis">
-                {inputsValues.city.cities.map((city, index) => {
-                  return (
-                    <ListGroup.Item
-                      key={index}
-                      onClick={() => {
-                        inputsValues.city.cities = [];
-                        const isDisabled = validationInput({
-                          name: "city",
-                          value: city,
-                        });
-
-                        updateLocal(isDisabled);
-                      }}
-                    >
-                      {city}
-                    </ListGroup.Item>
-                  );
-                })}
-              </ListGroup>
-            </div>
+            )}
           </Col>
         </Row>
         <TextArea

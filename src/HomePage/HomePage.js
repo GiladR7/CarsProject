@@ -1,6 +1,14 @@
+import { useEffect, useState } from "react";
 import { Form, Container } from "react-bootstrap";
+import { getAds } from "../DAL/api";
 import CarItem from "../Components/CarItem";
-export default function HomePage(props) {
+export default function HomePage() {
+  const [ads, setAds] = useState([]);
+  useEffect(() => {
+    getAds().then((ads) => {
+      setAds([...ads]);
+    });
+  }, []);
   return (
     <Container className="homep-page-container">
       <header>
@@ -37,17 +45,10 @@ export default function HomePage(props) {
           <Form.Control type="text" placeholder="סינון לפי דגם" />
         </Form.Group>
       </div>
-      <div className="d-flex flex-wrap mx-3 car-items-container">
-        <CarItem />
-        <CarItem />
-        <CarItem />
-        <CarItem />
-        <CarItem />
-        <CarItem />
-        <CarItem />
-        <CarItem />
-        <CarItem />
-        <CarItem />
+      <div className="d-flex flex-wrap  car-items-container">
+        {ads.map((ad, index) => {
+          return <CarItem key={index} cardDetails={ad} />;
+        })}
       </div>
     </Container>
   );

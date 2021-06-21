@@ -1,6 +1,12 @@
 import { validation } from "../utilities/validationObj";
 import { getCities } from "../DAL/api";
-export function validationFunc(inputsValues, setInputsValues, setisDisabled) {
+
+export function validationFunc(
+  inputsValues,
+  setInputsValues,
+  setisDisabled,
+  chooseCategory = false
+) {
   return ({ name, value }) => {
     const errors = [];
 
@@ -24,10 +30,15 @@ export function validationFunc(inputsValues, setInputsValues, setisDisabled) {
     if (name === "file") {
       value = value.files;
     }
+
     inputsValues[name].isValid = isValid;
     inputsValues[name].errors = errors;
     inputsValues[name].value = value;
-    const isDisabled = canSubmit(inputsValues, setisDisabled);
+    const isDisabled = canSubmit(
+      inputsValues,
+      setisDisabled,
+      chooseCategory ? chooseCategory : ""
+    );
 
     setInputsValues({
       ...inputsValues,
@@ -36,10 +47,11 @@ export function validationFunc(inputsValues, setInputsValues, setisDisabled) {
   };
 }
 
-function canSubmit(inputsValues, setisDisabled) {
+function canSubmit(inputsValues, setisDisabled, chooseCategory = false) {
   for (const key in inputsValues) {
     const { value, errors } = inputsValues[key];
     if ((!value && validation[key].required) || errors.length !== 0) {
+      if (chooseCategory === "אופנוע" && key === "gear") continue;
       setisDisabled(true);
       return true;
     }
@@ -54,6 +66,7 @@ export function inputOnChange(inputsValues, setInputsValues, setBtnDisable) {
     if (name === "city") {
       getCities(value, inputsValues, setInputsValues);
       setBtnDisable(true);
+      inputsValues.city.errors = ["הכנס עיר שמופיע ברשימה"];
     }
     setInputsValues({
       ...inputsValues,

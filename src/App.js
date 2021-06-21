@@ -90,7 +90,7 @@ function App() {
           <Route exact path="/">
             <HomePage />
           </Route>
-          <Route path="/car-details">
+          <Route path="/:id/car-details">
             <CarDetails />
           </Route>
           <Route path="/register">

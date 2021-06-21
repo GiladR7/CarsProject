@@ -67,17 +67,19 @@ header .form-check-label {
   display: flex;
   justify-content: space-around;
 }
-
+.car-items-container {
+  justify-content: center;
+}
 .card-details {
   border-bottom: 1px solid black;
   padding: 10px 0px;
 }
-.card {
-  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-  margin: 0 auto;
+.card-car-container {
   margin-bottom: 30px;
 }
-
+.car-card {
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
 .btn-border {
   border-radius: 50px;
 }
@@ -152,7 +154,13 @@ header .form-check-label {
 }
 .list-cietis {
   position: absolute;
+  background-color: white;
+  z-index: 1;
   width: 100%;
+}
+
+.card-city {
+  font-size: 15px;
 }
 
 .city-field {

@@ -64,9 +64,6 @@ export const validation = {
   },
   city: {
     required: true,
-    requiredError: "עיר מגורים הוא שדה חובה",
-    regex: /^[א-תA-Za-z -]+$/,
-    regexError: "עיר מגורים יכולה להכיל אותיות בלבד",
   },
   moreDetails: {
     required: false,

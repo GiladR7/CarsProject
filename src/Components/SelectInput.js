@@ -11,6 +11,8 @@ export default function SelectInput({
   value,
   isDisabled = false,
   updateLocal = false,
+  valueKey,
+  textKey,
 }) {
   return (
     <Form.Group controlId={htmlFor}>
@@ -30,8 +32,8 @@ export default function SelectInput({
           <option value={defaultValue}>{defaultText}</option>
           {optionSelect.map((value, index) => {
             return (
-              <option key={index} value={value}>
-                {value}
+              <option key={index} value={value[valueKey]}>
+                {value[textKey]}
               </option>
             );
           })}

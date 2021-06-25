@@ -51,7 +51,7 @@ function canSubmit(inputsValues, setisDisabled, chooseCategory = false) {
   for (const key in inputsValues) {
     const { value, errors } = inputsValues[key];
     if ((!value && validation[key].required) || errors.length !== 0) {
-      if (chooseCategory === "אופנוע" && key === "gear") continue;
+      if (+chooseCategory === 3 && key === "gear") continue;
       setisDisabled(true);
       return true;
     }

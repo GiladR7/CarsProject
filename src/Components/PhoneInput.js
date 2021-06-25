@@ -30,7 +30,7 @@ export default function NumberInputs({
               }}
               onBlur={(e) => {
                 const isDisabled = validationInput(e.target);
-                updateLocal(isDisabled);
+                updateLocal = updateLocal ? updateLocal(isDisabled) : null;
               }}
             />
             <Form.Control.Feedback
@@ -54,11 +54,17 @@ export default function NumberInputs({
               isInvalid={!areaCodeValid}
               onChange={(e) => {
                 const isDisabled = validationInput(e.target);
-                updateLocal(isDisabled);
+                updateLocal = updateLocal ? updateLocal(isDisabled) : null;
               }}
             >
               <option value="">קידומת</option>
               <option value="050">050</option>
+              <option value="052">052</option>
+              <option value="054">054</option>
+              <option value="053">053</option>
+              <option value="055">055</option>
+              <option value="056">056</option>
+              <option value="058">058</option>
             </Form.Control>
             <Form.Control.Feedback
               role="alert"

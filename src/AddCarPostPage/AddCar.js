@@ -18,7 +18,7 @@ import {
 } from "../utilities/localStoregeFunc";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useHistory } from "react-router";
-import { getCategories, categorys, getManufacturer } from "../DAL/api";
+import { getCategories, getModels, getManufacturer } from "../DAL/api";
 import { useEffect, useState } from "react";
 
 const iconsCategories = {
@@ -51,6 +51,15 @@ export default function AddCarParse1() {
       setBtnDidable
     );
   });
+
+  function allInputsOK() {
+    for (const key in inputValues) {
+      if (!inputValues[key].value) {
+        return false;
+      }
+    }
+    return true;
+  }
   const [selectCategories, setSelectCategories] = useState([]);
   const histoy = useHistory();
   const updateLocal = updateLocalStorege(
@@ -63,20 +72,34 @@ export default function AddCarParse1() {
     getCategories().then((categoreis) => setSelectCategories([...categoreis]));
   }, []);
   function changeCatgory({ name, value }) {
-    let isDisabled = false;
-    let btnIsDisabled = false;
-    let changeSelectOf = "";
+    let btnPahseDisabled;
+
     if (name === "cartype") {
       getManufacturer(value).then((selectManufacturer) => {
         inputValues.manufactur.selectList = selectManufacturer;
         inputValues.manufactur.isDisabled = false;
+        inputValues.model.isDisabled = true;
+        inputValues.model.selectList = [];
 
         setInputValues({ ...inputValues });
+        updateLocal(btnPahseDisabled);
       });
-      changeSelectOf = "manufactur";
+      inputValues.model.value = "";
+      inputValues.manufactur.value = "";
+    } else if (name === "manufactur") {
+      getModels(inputValues.cartype.value, value).then((selectModel) => {
+        inputValues.model.selectList = selectModel;
+        inputValues.model.isDisabled = value ? false : true;
+        inputValues.model.value = "";
+        setInputValues({ ...inputValues });
+        updateLocal(btnPahseDisabled);
+      });
     }
 
     inputValues[name].value = value;
+    btnPahseDisabled = !allInputsOK();
+    setBtnDidable(btnPahseDisabled);
+    updateLocal(btnPahseDisabled);
 
     setInputValues({
       ...inputValues,
@@ -98,9 +121,13 @@ export default function AddCarParse1() {
             name="cartype"
             onChange={(value) => changeCatgory({ value, name: "cartype" })}
           >
-            {selectCategories.map(({ categoryID, categoryName }) => {
+            {selectCategories.map(({ categoryID, categoryName }, index) => {
               return (
-                <ToggleButton value={categoryID} className="type-car">
+                <ToggleButton
+                  value={categoryID}
+                  className="type-car"
+                  key={index}
+                >
                   {categoryName}
                   <FontAwesomeIcon icon={iconsCategories[categoryName]} />{" "}
                 </ToggleButton>
@@ -128,6 +155,8 @@ export default function AddCarParse1() {
           isDisabled={inputValues.model.isDisabled}
           value={inputValues.model.value}
           inputChange={changeCatgory}
+          valueKey="modelID"
+          textKey="modelName"
         />
 
         <div className="text-left">

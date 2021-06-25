@@ -4,9 +4,9 @@ import { validationFunc, inputOnChange } from "../utilities/validationsFunc";
 import InputTextInLine from "../Components/InputTextInLine";
 import CheckBoxGroup from "../Components/CheckBoxGroup";
 import { useState } from "react";
-export default function Registration() {
-  const [isDisabled, setisDisabled] = useState(true);
-  const [inputsValues, setInputsValues] = useState({
+import { useHistory } from "react-router";
+export default function MyProfile() {
+  const userDetails = {
     user: {
       value: "",
       isValid: true,
@@ -17,22 +17,33 @@ export default function Registration() {
       isValid: true,
       errors: [],
     },
-    password: {
-      value: "",
-      isValid: true,
-      errors: [],
-    },
-    confirmPassword: {
-      value: "",
-      isValid: true,
-      errors: [],
-    },
+
     chooseCategory: {
       value: [],
       isValid: true,
       errors: [],
     },
+  };
+
+  const history = useHistory();
+
+  function setInputDataFromLocal() {
+    const userDataFromLocal = JSON.parse(localStorage.getItem("currentUser"));
+    if (userDataFromLocal) {
+      for (const key in userDetails) {
+        userDetails[key].value = userDataFromLocal[key];
+      }
+
+      return userDetails;
+    }
+    history.push("/");
+    return userDetails;
+  }
+  const [isDisabled, setisDisabled] = useState(false);
+  const [inputsValues, setInputsValues] = useState(() => {
+    return setInputDataFromLocal();
   });
+
   const inputOnBlur = validationFunc(
     inputsValues,
     setInputsValues,
@@ -62,7 +73,7 @@ export default function Registration() {
   return (
     <Container fluid>
       <Form className="form-register" onSubmit={(e) => onsubmit(e)}>
-        <h3 className="mb-4">הירשם לאתר</h3>
+        <h3 className="mb-4">הפרופיל שלי</h3>
         <InputTextInLine
           labelText="שם משתמש"
           placeholderText="הכנס שם משתמש"
@@ -87,31 +98,6 @@ export default function Registration() {
           inputOnChange={changeInput}
           validationFunc={inputOnBlur}
         />
-        <InputTextInLine
-          labelText="סיסמא"
-          placeholderText="הכנס סיסמא"
-          inputType="password"
-          htmlFor="password"
-          name="password"
-          value={inputsValues.password.value}
-          valid={inputsValues.password.isValid}
-          errors={inputsValues.password.errors}
-          inputOnChange={changeInput}
-          validationFunc={inputOnBlur}
-        />
-
-        <InputTextInLine
-          labelText=" אימות סיסמא"
-          placeholderText="אמת את סיסמא"
-          inputType="password"
-          htmlFor="confirmPassword"
-          name="confirmPassword"
-          value={inputsValues.confirmPassword.value}
-          valid={inputsValues.confirmPassword.isValid}
-          errors={inputsValues.confirmPassword.errors}
-          inputOnChange={changeInput}
-          validationFunc={inputOnBlur}
-        />
 
         <CheckBoxGroup
           labelText="הצג לי מודעות"
@@ -126,7 +112,7 @@ export default function Registration() {
         />
 
         <Button variant="primary" type="submit" disabled={isDisabled}>
-          הירשם לאתר
+          עדכן פרטים
         </Button>
       </Form>
     </Container>

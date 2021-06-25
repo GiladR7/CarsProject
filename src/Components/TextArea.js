@@ -18,7 +18,7 @@ export default function TextArea({
         name={name}
         as="textarea"
         value={value}
-        rows={3}
+        rows={4}
         placeholder={placeholderText}
         maxLength="255"
         onChange={(e) => {

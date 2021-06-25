@@ -6,19 +6,22 @@ export default function CheckBoxGroup({
   inline = true,
   name,
   onChecked,
+  checkBoxValues,
 }) {
   return (
     <Form.Group>
       <Form.Label>{labelText}</Form.Label>
-      {checkboxsValuesArr.map((value, index) => {
+      {checkboxsValuesArr.map(([text, value], index) => {
         return (
           <Form.Check
-            custom
+            custom="true"
             key={index}
             name={name}
+            checked={checkBoxValues.includes(value)}
+            value={value}
             inline={inline}
-            label={value}
-            onClick={(e) => onChecked(e.target)}
+            label={text}
+            onChange={(e) => onChecked(e.target)}
             type="checkbox"
             id={value}
           />

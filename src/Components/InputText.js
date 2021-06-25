@@ -27,7 +27,9 @@ export default function InputText({
           name={name}
           onChange={(e) => {
             const isDisabled = inputOnChange(e.target);
-            updateLocal(isDisabled === undefined ? true : isDisabled);
+            updateLocal = updateLocal
+              ? updateLocal(isDisabled === undefined ? true : isDisabled)
+              : null;
           }}
         />
         <Form.Control.Feedback

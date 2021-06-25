@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { Container, Row, Col, Table, ListGroup, Button } from "react-bootstrap";
 import { useHistory, useParams } from "react-router";
 import { getAds } from "../DAL/api";
+import { faPhone, faMoneyBillWave } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import CarouselCar from "./Carousel";
 export default function CarDetails() {
   const histoy = useHistory();
@@ -38,9 +40,38 @@ export default function CarDetails() {
             <div className="img-car-page">
               <CarouselCar images={adData.images} />
             </div>
-            <ListGroup horizontal className="justify-content-center">
-              <ListGroup.Item>מחיר הרכב : {adData.price} </ListGroup.Item>
-              <ListGroup.Item>לפרטים נוספים {adData.phone}</ListGroup.Item>
+            <ListGroup
+              horizontal
+              className="justify-content-center details-list"
+            >
+              <ListGroup.Item
+                style={{ borderRadius: "20px" }}
+                className="list-details-item"
+              >
+                <FontAwesomeIcon
+                  icon={faMoneyBillWave}
+                  style={{
+                    color: "#07bb07",
+                    paddingLeft: "2px",
+                    fontSize: "17px",
+                  }}
+                />{" "}
+                &#8362; {adData.price}
+              </ListGroup.Item>
+              <ListGroup.Item
+                className="list-details-item"
+                style={{ borderRadius: "20px" }}
+              >
+                <FontAwesomeIcon
+                  icon={faPhone}
+                  style={{
+                    color: "#1f9cff",
+                    paddingLeft: "2px",
+                    fontSize: "17px",
+                  }}
+                />{" "}
+                {adData.phone}
+              </ListGroup.Item>
             </ListGroup>
           </Col>
           <Col md="6">
@@ -68,9 +99,7 @@ export default function CarDetails() {
                       <th>תיבת הילוכים</th>
                       <td>{adData.gear}</td>
                     </tr>
-                  ) : (
-                    ""
-                  )}
+                  ) : null}
                   <tr>
                     <th>קילומטרים</th>
                     <td>{adData.km}</td>
@@ -86,7 +115,7 @@ export default function CarDetails() {
         </Row>
         <Row className="more-details-row">
           <Col md="6">
-            <h2>על הרכב</h2>
+            <h2>פרטים נוספים</h2>
             <div className="about-car-container">
               <p> {adData.description}</p>
             </div>

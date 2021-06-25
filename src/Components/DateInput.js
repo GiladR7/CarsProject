@@ -19,7 +19,8 @@ export default function DateInput({
           type="date"
           onChange={(e) => {
             const isDisable = changeInput(e.target);
-            updateLocal(isDisable);
+
+            updateLocal = updateLocal ? updateLocal(isDisable) : null;
           }}
           value={value}
           name={name}

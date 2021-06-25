@@ -1,7 +1,6 @@
 import { Container, Form, Button, Col, Row, ListGroup } from "react-bootstrap";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEdit } from "@fortawesome/free-solid-svg-icons";
-import { Link, useHistory } from "react-router-dom";
+
+import { Link, useHistory, useParams } from "react-router-dom";
 import TextArea from "../Components/TextArea";
 import InputText from "../Components/InputText";
 import SelectInput from "../Components/SelectInput";
@@ -9,152 +8,106 @@ import PhoneInput from "../Components/PhoneInput";
 import DateInput from "../Components/DateInput";
 import { useEffect, useState } from "react";
 import { validationFunc, inputOnChange } from "../utilities/validationsFunc";
-import { getGears, getColorsOptions, sendNewAD } from "../DAL/api";
-import {
-  getItemLocal,
-  updateLocalStorege,
-} from "../utilities/localStoregeFunc";
+import { getGears, getAdByID, getColorsOptions } from "../DAL/api";
+
 import InputNumber from "../Components/InputNumber";
 
-export default function AddCarParse2() {
-  const [isDisable, setIsDisable] = useState(true);
+export default function EditCarAd() {
+  const [isDisable, setIsDisable] = useState(false);
   const [chooseCategory, setChooseCategory] = useState("");
-  const [inputsValues, setInputsValues] = useState(() => {
-    return getItemLocal(
-      "adCarData",
-      "adDetails",
-      "canSubmit",
-      {
-        owners: {
-          value: "",
-          isValid: true,
-          errors: [],
-        },
-        year: {
-          value: "",
-          isValid: true,
-          errors: [],
-        },
-        km: {
-          value: "",
-          isValid: true,
-          errors: [],
-        },
-        color: {
-          value: "",
-          isValid: true,
-          errors: [],
-          selectList: [],
-        },
-        gear: {
-          value: "",
-          isValid: true,
-          errors: [],
-          selectList: [],
-        },
-        codeArea: {
-          value: "",
-          isValid: true,
-          errors: [],
-        },
-        phone: {
-          value: "",
-          isValid: true,
-          errors: [],
-        },
-        file: {
-          value: "",
-          isValid: true,
-          errors: [],
-        },
-        city: {
-          value: "",
-          isValid: true,
-          errors: [],
-          cities: [],
-        },
-        moreDetails: {
-          value: "",
-          isValid: true,
-          errors: [],
-        },
-      },
-      setIsDisable
-    );
+  const [inputsValues, setInputsValues] = useState({
+    owners: {
+      value: "",
+      isValid: true,
+      errors: [],
+    },
+    year: {
+      value: "",
+      isValid: true,
+      errors: [],
+    },
+    km: {
+      value: "",
+      isValid: true,
+      errors: [],
+    },
+    color: {
+      value: "",
+      isValid: true,
+      errors: [],
+      selectList: [],
+    },
+    gear: {
+      value: "",
+      isValid: true,
+      errors: [],
+      selectList: [],
+    },
+    codeArea: {
+      value: "",
+      isValid: true,
+      errors: [],
+    },
+    phone: {
+      value: "",
+      isValid: true,
+      errors: [],
+    },
+    file: {
+      value: "",
+      isValid: true,
+      errors: [],
+    },
+    city: {
+      value: "",
+      isValid: true,
+      errors: [],
+      cities: [],
+    },
+    description: {
+      value: "",
+      isValid: true,
+      errors: [],
+    },
   });
+  const { id } = useParams();
+  useEffect(() => {
+    getAdByID(id).then((ad) => {
+      for (const key in inputsValues) {
+        if (key in ad) inputsValues[key].value = ad[key];
+      }
+      const [codeArea, phone] = ad.phone.split("-");
+      inputsValues.codeArea.value = codeArea;
+      inputsValues.phone.value = phone;
+      setChooseCategory(ad.categoryID);
+      setInputsValues({ ...inputsValues });
+    });
+    getGears().then((gear) => {
+      inputsValues.gear.selectList = gear;
+      setInputsValues({ ...inputsValues });
+    });
+    getColorsOptions().then((colors) => {
+      inputsValues.color.selectList = colors;
+      setInputsValues({ ...inputsValues });
+    });
+  }, []);
+
+  const histoy = useHistory();
+
   const validationInput = validationFunc(
     inputsValues,
     setInputsValues,
     setIsDisable,
     chooseCategory
   );
-  useEffect(() => {
-    if (
-      !localStorage.getItem("adCarData") ||
-      JSON.parse(localStorage.getItem("adCarData")).isDisabled
-    ) {
-      histoy.push("add-new-car");
-    } else {
-      const {
-        carSelected: {
-          cartype: { value: category },
-        },
-      } = JSON.parse(localStorage.getItem("adCarData"));
-
-      setChooseCategory(category);
-
-      getGears().then((gear) => {
-        inputsValues.gear.selectList = gear;
-        setInputsValues({ ...inputsValues });
-      });
-
-      getColorsOptions().then((colors) => {
-        inputsValues.color.selectList = colors;
-        setInputsValues({ ...inputsValues });
-      });
-      //check if all input ok when move between the pages of the addCar
-      const validationInput = validationFunc(
-        inputsValues,
-        setInputsValues,
-        setIsDisable,
-        category
-      );
-      validationInput({ name: "km", value: inputsValues.km.value });
-    }
-  }, []);
-
-  const updateLocal = updateLocalStorege(
-    "canSubmit",
-    "adCarData",
-    "adDetails",
-    inputsValues
-  );
-
-  const histoy = useHistory();
-
   const changeInput = inputOnChange(
     inputsValues,
     setInputsValues,
     setIsDisable
   );
-
-  function addValueData(insetObj, dataObj) {
-    for (const key in dataObj) {
-      insetObj[key] = dataObj[key].value;
-    }
-  }
   function onsubmit(e) {
     e.preventDefault();
-    const adData = {};
-    const { adDetails: Pashe2Data, carSelected: Pashe1Data } = JSON.parse(
-      localStorage.getItem("adCarData")
-    );
-    addValueData(adData, Pashe1Data);
-    addValueData(adData, Pashe2Data);
-    adData.phone = `${adData.codeArea}-${adData.phone}`;
-    delete adData.codeArea;
-    sendNewAD(adData);
-
+    console.log(JSON.parse(localStorage.getItem("adCarData")));
     localStorage.removeItem("adCarData");
 
     histoy.push("/");
@@ -172,7 +125,6 @@ export default function AddCarParse2() {
               minDate={"1960-01-01"}
               value={inputsValues.year.value}
               changeInput={validationInput}
-              updateLocal={updateLocal}
               required={true}
             />
           </Col>
@@ -186,7 +138,6 @@ export default function AddCarParse2() {
               value={inputsValues.km.value}
               changeInput={validationInput}
               name="km"
-              updateLocal={updateLocal}
               required={true}
             />
           </Col>
@@ -202,7 +153,6 @@ export default function AddCarParse2() {
               value={inputsValues.owners.value}
               changeInput={validationInput}
               name="owners"
-              updateLocal={updateLocal}
               required={true}
             />
           </Col>
@@ -220,7 +170,6 @@ export default function AddCarParse2() {
                 errors={inputsValues.city.errors}
                 name="city"
                 autocomplete="off"
-                updateLocal={updateLocal}
                 className="city-field"
               />
               <ListGroup className="list-cietis">
@@ -235,8 +184,6 @@ export default function AddCarParse2() {
                           name: "city",
                           value: city,
                         });
-
-                        updateLocal(isDisabled);
                       }}
                     >
                       {city}
@@ -261,11 +208,10 @@ export default function AddCarParse2() {
                 id="validationFormik107"
                 placeholder="בחר קובץ"
                 onChange={(e) => {
-                  const isDisable = validationInput({
+                  validationInput({
                     value: e.target.files,
                     name: "file",
                   });
-                  updateLocal(isDisable);
                 }}
               />
               <Form.Control.Feedback
@@ -287,7 +233,6 @@ export default function AddCarParse2() {
               phoneValid={inputsValues.phone.isValid}
               validationInput={validationInput}
               inputChange={changeInput}
-              updateLocal={updateLocal}
               areaValue={inputsValues.codeArea.value}
               phoneValue={inputsValues.phone.value}
             />
@@ -304,13 +249,12 @@ export default function AddCarParse2() {
               value={inputsValues.color.value}
               errors={inputsValues.color.errors}
               valid={inputsValues.color.isValid}
-              updateLocal={updateLocal}
               valueKey="colorID"
               textKey="colorName"
             />
           </Col>
           <Col md="6">
-            {+chooseCategory !== 3 && (
+            {chooseCategory !== 3 && (
               <SelectInput
                 htmlFor="gear"
                 textLable="סוג תיבת הילוכים"
@@ -320,7 +264,6 @@ export default function AddCarParse2() {
                 value={inputsValues.gear.value}
                 errors={inputsValues.gear.errors}
                 valid={inputsValues.gear.isValid}
-                updateLocal={updateLocal}
                 valueKey="gearID"
                 textKey="gearName"
               />
@@ -331,19 +274,17 @@ export default function AddCarParse2() {
           htmlFor="more-details"
           placeholderText="הכנס פרטים נוספים על הרכב"
           labelText="פרטים נוספים"
-          name="moreDetails"
+          name="description"
           maxCharacters="255"
-          value={inputsValues.moreDetails.value}
+          value={inputsValues.description.value}
           inputOnChange={changeInput}
-          updateLocal={updateLocal}
         />
         <div className="d-flex btn-parse2">
-          <Link className="btn btn-warning" to="/add-new-car">
-            <FontAwesomeIcon icon={faEdit} /> חזור
+          <Link className="btn btn-warning" to="/">
+            חזרה למודעות
           </Link>
-
           <Button variant="primary" type="submit" disabled={isDisable}>
-            פרסם מודעה
+            עדכן מודעה
           </Button>
         </div>
       </Form>

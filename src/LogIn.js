@@ -34,7 +34,7 @@ export default function LogIn({ closePopUp, setIsLogIn }) {
       });
   }
   return (
-    <div fluid className="log-in-pop">
+    <div className="log-in-pop">
       <FontAwesomeIcon
         icon={faTimes}
         className="close-btn"

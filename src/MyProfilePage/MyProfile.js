@@ -2,6 +2,7 @@ import { Container, Form, Button } from "react-bootstrap";
 import { sendNewUser } from "../DAL/api";
 import { validationFunc, inputOnChange } from "../utilities/validationsFunc";
 import InputTextInLine from "../Components/InputTextInLine";
+import { checkBoxOnChange } from "../utilities/utilities";
 import CheckBoxGroup from "../Components/CheckBoxGroup";
 import { useState } from "react";
 import { useHistory } from "react-router";
@@ -43,23 +44,15 @@ export default function MyProfile() {
   const [inputsValues, setInputsValues] = useState(() => {
     return setInputDataFromLocal();
   });
-
+  const updateCheckBoxSelected = checkBoxOnChange(
+    inputsValues,
+    setInputsValues
+  );
   const inputOnBlur = validationFunc(
     inputsValues,
     setInputsValues,
     setisDisabled
   );
-  function updateCheckBoxSelected({ value, checked }) {
-    if (checked) {
-      inputsValues.chooseCategory.value.push(+value);
-    } else {
-      inputsValues.chooseCategory.value =
-        inputsValues.chooseCategory.value.filter(
-          (category) => +category !== +value
-        );
-    }
-    setInputsValues({ ...inputsValues });
-  }
 
   function onsubmit(e) {
     const fieldsData = {};

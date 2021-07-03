@@ -45,12 +45,12 @@ export default function CarItem({
       });
     }
   }, [isLogIn]);
-  function setLikesAds() {
-    updateFaivoriesAds(onlineUser.userID, id).then(() => {
-      getIDsOfFaivoritesAds(onlineUser.userID).then((likeIDs) => {
-        setCountFavoritesAds(likeIDs.length);
-        setLikeAdsIDs(likeIDs);
-      });
+
+  function updateLikesAdOnClick() {
+    updateFaivoriesAds(onlineUser.userID, id).then((faivoriteAdsByUser) => {
+      setCountFavoritesAds(faivoriteAdsByUser.length);
+      setLikeAdsIDs(faivoriteAdsByUser);
+
       if (setMyFavoriesAds) {
         getMyFaivoritesAds(onlineUser.userID).then((ads) => {
           setMyFavoriesAds([...ads]);
@@ -77,7 +77,7 @@ export default function CarItem({
               className="love-post fas"
               icon={likeAdsIDs.includes(id) ? faHeart : icons.faHeart}
               onClick={() => {
-                setLikesAds();
+                updateLikesAdOnClick();
               }}
             ></FontAwesomeIcon>
           )}

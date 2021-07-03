@@ -9,7 +9,12 @@ import PhoneInput from "../Components/PhoneInput";
 import DateInput from "../Components/DateInput";
 import { useEffect, useState } from "react";
 import { validationFunc, inputOnChange } from "../utilities/validationsFunc";
-import { getGears, getColorsOptions, sendNewAD } from "../DAL/api";
+import {
+  getGears,
+  getColorsOptions,
+  sendNewAD,
+  getAreaCodes,
+} from "../DAL/api";
 import {
   getItemLocal,
   updateLocalStorege,
@@ -19,6 +24,7 @@ import InputNumber from "../Components/InputNumber";
 export default function AddCarParse2() {
   const [isDisable, setIsDisable] = useState(true);
   const [chooseCategory, setChooseCategory] = useState("");
+  const [selectAreaCodes, setSelectAreaCodes] = useState([]);
   const [inputsValues, setInputsValues] = useState(() => {
     return getItemLocal(
       "adCarData",
@@ -108,6 +114,8 @@ export default function AddCarParse2() {
         setInputsValues({ ...inputsValues });
       });
 
+      getAreaCodes().then((codeArea) => setSelectAreaCodes([...codeArea]));
+
       getColorsOptions().then((colors) => {
         inputsValues.color.selectList = colors;
         setInputsValues({ ...inputsValues });
@@ -151,8 +159,6 @@ export default function AddCarParse2() {
     );
     addValueData(adData, Pashe1Data);
     addValueData(adData, Pashe2Data);
-    adData.phone = `${adData.codeArea}-${adData.phone}`;
-    delete adData.codeArea;
     sendNewAD(adData);
 
     localStorage.removeItem("adCarData");
@@ -290,6 +296,7 @@ export default function AddCarParse2() {
               updateLocal={updateLocal}
               areaValue={inputsValues.codeArea.value}
               phoneValue={inputsValues.phone.value}
+              phoneCodeAreaSelect={selectAreaCodes}
             />
           </Col>
         </Row>

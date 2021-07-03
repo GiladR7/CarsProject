@@ -124,10 +124,10 @@ export default function CarDetails() {
             <Button
               variant="primary"
               onClick={() => {
-                histoy.push("/");
+                histoy.goBack();
               }}
             >
-              חזרה לעמוד הראשי
+              חזרה לעמוד הקודם
             </Button>
           </Col>
         </Row>

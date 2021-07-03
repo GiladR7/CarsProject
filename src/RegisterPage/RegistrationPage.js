@@ -3,6 +3,7 @@ import { sendNewUser } from "../DAL/api";
 import { validationFunc, inputOnChange } from "../utilities/validationsFunc";
 import InputTextInLine from "../Components/InputTextInLine";
 import CheckBoxGroup from "../Components/CheckBoxGroup";
+import { checkBoxOnChange } from "../utilities/utilities";
 import { useState } from "react";
 export default function Registration() {
   const [isDisabled, setisDisabled] = useState(true);
@@ -38,17 +39,10 @@ export default function Registration() {
     setInputsValues,
     setisDisabled
   );
-  function updateCheckBoxSelected({ value, checked }) {
-    if (checked) {
-      inputsValues.chooseCategory.value.push(+value);
-    } else {
-      inputsValues.chooseCategory.value =
-        inputsValues.chooseCategory.value.filter(
-          (category) => +category !== +value
-        );
-    }
-    setInputsValues({ ...inputsValues });
-  }
+  const updateCheckBoxSelected = checkBoxOnChange(
+    inputsValues,
+    setInputsValues
+  );
 
   function onsubmit(e) {
     const fieldsData = {};

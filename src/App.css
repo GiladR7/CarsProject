@@ -85,6 +85,19 @@ header .form-check-label {
   margin-top: 20px;
 }
 
+.sort-btn-container {
+  align-items: flex-start;
+}
+
+label.btn.sortByBtn.active.btn-success,
+label.btn.sortByBtn.active.btn-danger,
+label.btn.sortByBtn.active.btn-info {
+  border: 1px solid white;
+}
+.sory-container > div {
+  padding-right: 0px;
+  padding-left: 0px;
+}
 .count-likes {
   position: relative;
   bottom: 12px;
@@ -464,4 +477,14 @@ header::before {
   border-radius: 50%;
   padding: 4px;
   background-color: #ffff;
+}
+.pagination {
+  justify-content: center;
+  padding-right: 0px;
+}
+
+.page-link {
+  margin-right: 4px;
+
+  margin-left: 4px;
 }

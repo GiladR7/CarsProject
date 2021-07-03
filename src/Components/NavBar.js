@@ -41,7 +41,7 @@ export default function MyNavbar({
     if (
       Object.keys(activeLink).includes(path.slice(1)) ||
       path === "/" ||
-      path === "add-new-car2"
+      path === "/add-new-car2"
     ) {
       const curentLocation = path.slice(1).includes("add-new-car")
         ? "add-new-car"

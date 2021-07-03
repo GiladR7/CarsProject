@@ -14,7 +14,7 @@ export default function CheckBoxGroup({
       {checkboxsValuesArr.map(([text, value], index) => {
         return (
           <Form.Check
-            custom="true"
+            custom
             key={index}
             name={name}
             checked={checkBoxValues.includes(value)}

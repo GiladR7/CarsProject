@@ -1,3 +1,4 @@
+const serverHost = "http://localhost:5000";
 const users = [
   {
     userID: 1,
@@ -345,7 +346,7 @@ export function getAdByID(adID) {
 }
 
 function getAdsByID(adsIDs) {
-  return getAdEditData().then((ads) => {
+  return getAds().then((ads) => {
     const adsData = ads.filter((ad) => {
       return adsIDs.includes(ad.id);
     });
@@ -401,5 +402,23 @@ export async function updateFaivoriesAds(userID, adID) {
     });
   } else {
     faivoriteAdsByUser.push({ userID, adID });
+  }
+
+  return getIDsOfFaivoritesAds(userID).then((idsOfFaivoritesAds) => {
+    return idsOfFaivoritesAds;
+  });
+}
+
+function getAdsByPage(pageNum, limit = 2) {
+  return Promise.resolve();
+}
+
+export async function getAreaCodes() {
+  try {
+    const data = await fetch(`${serverHost}/cars/codeArea`);
+    const phoneAreaCodes = await data.json();
+    return phoneAreaCodes;
+  } catch (err) {
+    return [];
   }
 }

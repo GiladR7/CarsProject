@@ -15,43 +15,61 @@ import {
   faCalendarAlt,
 } from "@fortawesome/free-solid-svg-icons";
 import CheckBoxGroup from "../Components/CheckBoxGroup";
-import { getAds } from "../DAL/api";
+import { getAds, getIDsOfFaivoritesAds } from "../DAL/api";
 import CarItem from "../Components/CarItem";
 import { checkBoxOnChange } from "../utilities/utilities";
-import { useHistory, useLocation } from "react-router";
 import { faHotjar } from "@fortawesome/free-brands-svg-icons";
 
 export default function HomePage({ setCountFavoritesAds, isLogIn }) {
   const [ads, setAds] = useState([]);
-
-  const location = useLocation();
-
-  const [orderHeigher, setOrderHeigher] = useState(true);
-  const { search } = location;
-
-  const [checkBoxValues, setCheckBoxValues] = useState({
-    chooseCategory: {
-      value: [],
-    },
+  const onlineUser = JSON.parse(localStorage.getItem("currentUser"));
+  const [orderHeigher, setOrderHeigher] = useState("true");
+  const [orderBy, setOrdetBy] = useState("adDate");
+  const [checkBoxValues, setCheckBoxValues] = useState(() => {
+    return updateUserCategories();
   });
+  const [likesIDs, setLikeAdsIDs] = useState([]);
 
   function updateUserCategories() {
-    checkBoxValues.chooseCategory.value = [];
+    const categories = {
+      chooseCategory: {
+        value: [],
+      },
+    };
     if (localStorage.getItem("currentUser")) {
       const { chooseCategory } = JSON.parse(
         localStorage.getItem("currentUser")
       );
-      checkBoxValues.chooseCategory.value = chooseCategory;
+      categories.chooseCategory.value = chooseCategory;
     }
-    setCheckBoxValues({ ...checkBoxValues });
+    return categories;
   }
   useEffect(() => {
     async function showAds() {
-      const adsData = await getAds();
+      const adsData = await getAds(
+        orderBy,
+        orderHeigher,
+        checkBoxValues.chooseCategory.value
+      );
       setAds([...adsData]);
     }
     showAds();
-    updateUserCategories();
+  }, [orderBy, orderHeigher, checkBoxValues]);
+
+  useEffect(async () => {
+    if (onlineUser) {
+      const likesIDs = await getIDsOfFaivoritesAds(onlineUser.userID);
+      setCountFavoritesAds(likesIDs.length);
+      setLikeAdsIDs(likesIDs);
+    }
+  }, [isLogIn]);
+
+  useEffect(() => {
+    const {
+      chooseCategory: { value },
+    } = updateUserCategories();
+    checkBoxValues.chooseCategory.value = value;
+    setCheckBoxValues({ ...checkBoxValues });
   }, [isLogIn]);
 
   const updateCheckBoxSelected = checkBoxOnChange(
@@ -78,18 +96,35 @@ export default function HomePage({ setCountFavoritesAds, isLogIn }) {
             className=" col-sm-6 row sort-btn-container mr-2"
             type="radio"
             name="sortBy"
-            defaultValue="date"
+            value={orderBy}
           >
-            <ToggleButton value="date" className="sortByBtn" variant="info">
+            <ToggleButton
+              value="adDate"
+              className="sortByBtn"
+              variant="info"
+              onClick={(e) => {
+                setOrdetBy(e.target.value);
+              }}
+            >
               תאריך <FontAwesomeIcon icon={faCalendarAlt} />
             </ToggleButton>
-            <ToggleButton value="views" className="sortByBtn " variant="danger">
+            <ToggleButton
+              value="views"
+              className="sortByBtn "
+              variant="danger"
+              onClick={(e) => {
+                setOrdetBy(e.target.value);
+              }}
+            >
               פופולאריות <FontAwesomeIcon icon={faHotjar} />
             </ToggleButton>
             <ToggleButton
-              value="price"
+              value="carprice"
               className="sortByBtn "
               variant="success"
+              onClick={(e) => {
+                setOrdetBy(e.target.value);
+              }}
             >
               מחיר <FontAwesomeIcon icon={faMoneyBill} />
             </ToggleButton>
@@ -136,8 +171,9 @@ export default function HomePage({ setCountFavoritesAds, isLogIn }) {
             <CarItem
               key={index}
               cardDetails={ad}
-              setCountFavoritesAds={setCountFavoritesAds}
+              // setCountFavoritesAds={setCountFavoritesAds}
               isLogIn={isLogIn}
+              likesIDs={likesIDs}
             />
           );
         })}

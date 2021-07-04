@@ -8,7 +8,12 @@ import PhoneInput from "../Components/PhoneInput";
 import DateInput from "../Components/DateInput";
 import { useEffect, useState } from "react";
 import { validationFunc, inputOnChange } from "../utilities/validationsFunc";
-import { getGears, getAdByID, getColorsOptions } from "../DAL/api";
+import {
+  getGears,
+  getAdEditData,
+  getColorsOptions,
+  getAreaCodes,
+} from "../DAL/api";
 
 import InputNumber from "../Components/InputNumber";
 
@@ -47,6 +52,7 @@ export default function EditCarAd() {
       value: "",
       isValid: true,
       errors: [],
+      selectList: [],
     },
     phone: {
       value: "",
@@ -72,14 +78,16 @@ export default function EditCarAd() {
   });
   const { id } = useParams();
   useEffect(() => {
-    getAdByID(id).then((ad) => {
+    getAdEditData(id).then((ad) => {
+      console.log(ad);
       for (const key in inputsValues) {
         if (key in ad) inputsValues[key].value = ad[key];
       }
-      const [codeArea, phone] = ad.phone.split("-");
-      inputsValues.codeArea.value = codeArea;
-      inputsValues.phone.value = phone;
       setChooseCategory(ad.categoryID);
+      setInputsValues({ ...inputsValues });
+    });
+    getAreaCodes().then((codeArea) => {
+      inputsValues.codeArea.selectList = codeArea;
       setInputsValues({ ...inputsValues });
     });
     getGears().then((gear) => {
@@ -235,6 +243,7 @@ export default function EditCarAd() {
               inputChange={changeInput}
               areaValue={inputsValues.codeArea.value}
               phoneValue={inputsValues.phone.value}
+              phoneCodeAreaSelect={inputsValues.codeArea.selectList}
             />
           </Col>
         </Row>

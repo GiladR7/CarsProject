@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Container, Row, Col, Table, ListGroup, Button } from "react-bootstrap";
 import { useHistory, useParams } from "react-router";
-import { getAds } from "../DAL/api";
+import { getAdByID } from "../DAL/api";
 import { faPhone, faMoneyBillWave } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import CarouselCar from "./Carousel";
@@ -22,15 +22,9 @@ export default function CarDetails() {
     images: [],
     description: "",
   });
-  useEffect(() => {
-    getAds().then((data) => {
-      const [adData] = data.filter(({ id }) => {
-        return +adID === +id;
-      });
-      setAdData({
-        ...adData,
-      });
-    });
+  useEffect(async () => {
+    const ad = await getAdByID(adID);
+    setAdData({ ...ad });
   }, []);
   return (
     <Container fluid className="mt-5 mb-3">

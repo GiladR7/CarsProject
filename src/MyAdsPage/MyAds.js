@@ -7,11 +7,10 @@ import CarItem from "../Components/CarItem";
 
 export default function MyAds() {
   const [myAds, setMyAds] = useState([]);
-  useEffect(() => {
+  useEffect(async () => {
     const { userID } = JSON.parse(localStorage.getItem("currentUser"));
-    getMyAds(userID).then((ads) => {
-      setMyAds([...ads]);
-    });
+    const myAds = await getMyAds(userID);
+    setMyAds([...myAds]);
   }, []);
   return (
     <Container fluid="sm">

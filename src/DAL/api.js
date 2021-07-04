@@ -37,7 +37,9 @@ const colors = [
 ];
 
 export async function getColorsOptions() {
-  return Promise.resolve(colors);
+  const data = await fetch(`${serverHost}/cars/colors`);
+  const colors = await data.json();
+  return colors;
 }
 async function getUsers() {
   return users;
@@ -57,251 +59,200 @@ export async function getCities(serach, inputsValues, setInputsValues) {
   inputsValues.city.isValid = isValid;
   setInputsValues({ ...inputsValues });
 }
-export async function getAdEditData() {
-  return [
+export async function getAdEditData(adID) {
+  // owners: {
+  //   value: "",
+  //   isValid: true,
+  //   errors: [],
+  // },
+  // year: {
+  //   value: "",
+  //   isValid: true,
+  //   errors: [],
+  // },
+  // km: {
+  //   value: "",
+  //   isValid: true,
+  //   errors: [],
+  // },
+  // color: {
+  //   value: "",
+  //   isValid: true,
+  //   errors: [],
+  //   selectList: [],
+  // },
+  // gear: {
+  //   value: "",
+  //   isValid: true,
+  //   errors: [],
+  //   selectList: [],
+  // },
+  // codeArea: {
+  //   value: "",
+  //   isValid: true,
+  //   errors: [],
+  // },
+  // phone: {
+  //   value: "",
+  //   isValid: true,
+  //   errors: [],
+  // },
+  // file: {
+  //   value: "",
+  //   isValid: true,
+  //   errors: [],
+  // },
+  // city: {
+  //   value: "",
+  //   isValid: true,
+  //   errors: [],
+  //   cities: [],
+  // },
+  // description: {
+  //   value: "",
+  //   isValid: true,
+  //   errors: [],
+  // },
+  const data = await fetch(`${serverHost}/ads?adID=${adID}&editData=true`);
+  const [
     {
-      userID: 1,
-      id: 1,
-      categoryID: 1,
-      manufacturer: "יונדאי",
-      model: "טוסון",
-      year: "2020-02-12",
-      owners: 2,
-      gear: 1,
-      km: 1200,
-      city: "נשר",
-      color: 1,
-      price: 120000,
-      phone: "050-2737204",
-      images: [
-        "https://www.galileasing.co.il/wp-content/uploads/2018/05/TUCSON.jpg",
-        "http://www.carcost.co.il/Images/VehicleSubModelOptimizedImages/3062-7865.jpg",
-        "https://www.kvishim.co.il/wp-content/uploads/images-007/Tucson-2016.jpg",
-        "https://big-lease.co.il/wp-content/uploads/2019/10/Hyundai-Tucson-6.jpg",
-      ],
-      description: `רכב חדש אחריות עד 30/7/22 בניסאן מצלמה אחורית מולטימדיה חימום
-      מושבים שלט חכם בגז' ענק .נסע רק לעבודה ובית שמורה 24,000 ק"מ
-      נסיעות רחוקות נוסע 5.0 ל100 km שותה 1 ל 20 -18 בעיר 1 ל 13-15
-      שווה כל שקל !!!!!!רק לרציניים בלבד`,
-      postDate: "02.12.2018",
+      codeAreaID: codeArea,
+      gearID: gear,
+      colorID: color,
+      carprice: price,
+      modelyear: year,
+      ...rest
     },
-    {
-      userID: 2,
-      id: 2,
-      categoryID: 4,
-      manufacturer: "סוזוקי",
-      model: "גימיני",
-      year: "2020-02-12",
-      city: "נתניה",
-      owners: 3,
-      gear: 2,
-      km: 120000,
-      color: 2,
-      price: 65000,
-      phone: "050-2737204",
-      images: [
-        "https://img.favcars.com/suzuki/jimny/suzuki_jimny_2007_wallpapers_1_b.jpg",
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS3mK3ZmCS9ulOhEMPj-U1RRrvndTIT83Xjm7ckZ_1a4ljdpXEdgsFFfXiAdXuWBPc2z5o&usqp=CAU",
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRbjgv3jdu457TTjJ9Q30YkSrNyWCHK558i8Ap6mbfmVQ_baRzslbnyqirIn6qQ7ndv-rA&usqp=CAU",
-      ],
-      description: `רכב חדש אחריות עד 30/7/22 בניסאן מצלמה אחורית מולטימדיה חימום
-      מושבים שלט חכם בגז' ענק .נסע רק לעבודה ובית שמורה 24,000 ק"מ
-      נסיעות רחוקות נוסע 5.0 ל100 km שותה 1 ל 20 -18 בעיר 1 ל 13-15
-      שווה כל שקל !!!!!!רק לרציניים בלבד`,
-      postDate: "09.06.2020",
-    },
-    {
-      userID: 1,
-      id: 3,
-      categoryID: 3,
-      manufacturer: "פיג'ו",
-      model: "GMAX 250",
-      year: "2020-02-12",
-      city: "קרית שמונה",
-      owners: 3,
-      km: 12000,
-      color: 3,
-      price: 12000,
-      phone: "050-3434231",
-      images: [
-        "http://1.bp.blogspot.com/-MUNRWFJiAwU/UxNoIlUgd7I/AAAAAAAAAJk/6WD_yYHiNys/s1600/IMG_0307.JPG",
-      ],
-      description: `רכב חדש אחריות עד 30/7/22 בניסאן מצלמה אחורית מולטימדיה חימום
-      מושבים שלט חכם בגז' ענק .נסע רק לעבודה ובית שמורה 24,000 ק"מ
-      נסיעות רחוקות נוסע 5.0 ל100 km שותה 1 ל 20 -18 בעיר 1 ל 13-15
-      שווה כל שקל !!!!!!רק לרציניים בלבד`,
-      postDate: "09.06.2020",
-    },
-  ];
+  ] = await data.json();
+  return {
+    codeArea,
+    gear,
+    color,
+    price,
+    year: year.split("T")[0],
+    ...rest,
+  };
 }
 
-export async function getAds() {
-  return [
-    {
-      userID: 1,
-      id: 1,
-      manufacturer: "יונדאי",
-      model: "טוסון",
-      year: "2020-02-12",
-      owners: 2,
-      gear: "אוטומטי",
-      km: "1,200",
-      city: "נשר",
-      color: "לבן",
-      price: "120,000",
-      phone: "050-2737204",
-      images: [
-        "https://www.galileasing.co.il/wp-content/uploads/2018/05/TUCSON.jpg",
-        "http://www.carcost.co.il/Images/VehicleSubModelOptimizedImages/3062-7865.jpg",
-        "https://www.kvishim.co.il/wp-content/uploads/images-007/Tucson-2016.jpg",
-        "https://big-lease.co.il/wp-content/uploads/2019/10/Hyundai-Tucson-6.jpg",
-      ],
-      description: `רכב חדש אחריות עד 30/7/22 בניסאן מצלמה אחורית מולטימדיה חימום
-      מושבים שלט חכם בגז' ענק .נסע רק לעבודה ובית שמורה 24,000 ק"מ
-      נסיעות רחוקות נוסע 5.0 ל100 km שותה 1 ל 20 -18 בעיר 1 ל 13-15
-      שווה כל שקל !!!!!!רק לרציניים בלבד`,
-      postDate: "02.12.2018",
-    },
-    {
-      userID: 2,
-      id: 2,
-      manufacturer: "סוזוקי",
-      model: "גימיני",
-      year: "2020-02-12",
-      city: "נתניה",
-      owners: 3,
-      gear: "אוטומטי",
-      km: "120,000",
-      color: "שחור",
-      price: "65,000",
-      phone: "050-2737204",
-      images: [
-        "https://img.favcars.com/suzuki/jimny/suzuki_jimny_2007_wallpapers_1_b.jpg",
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS3mK3ZmCS9ulOhEMPj-U1RRrvndTIT83Xjm7ckZ_1a4ljdpXEdgsFFfXiAdXuWBPc2z5o&usqp=CAU",
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRbjgv3jdu457TTjJ9Q30YkSrNyWCHK558i8Ap6mbfmVQ_baRzslbnyqirIn6qQ7ndv-rA&usqp=CAU",
-      ],
-      description: `רכב חדש אחריות עד 30/7/22 בניסאן מצלמה אחורית מולטימדיה חימום
-      מושבים שלט חכם בגז' ענק .נסע רק לעבודה ובית שמורה 24,000 ק"מ
-      נסיעות רחוקות נוסע 5.0 ל100 km שותה 1 ל 20 -18 בעיר 1 ל 13-15
-      שווה כל שקל !!!!!!רק לרציניים בלבד`,
-      postDate: "09.06.2020",
-    },
-    {
-      userID: 1,
-      id: 3,
-      manufacturer: "פיג'ו",
-      model: "GMAX 250",
-      year: "2012-02-12",
-      city: "קרית שמונה",
-      owners: 3,
-      km: "12,000",
-      color: "לבן",
-      price: "12,000",
-      phone: "050-3434231",
-      images: [
-        "http://1.bp.blogspot.com/-MUNRWFJiAwU/UxNoIlUgd7I/AAAAAAAAAJk/6WD_yYHiNys/s1600/IMG_0307.JPG",
-      ],
-      description: `רכב חדש אחריות עד 30/7/22 בניסאן מצלמה אחורית מולטימדיה חימום
-      מושבים שלט חכם בגז' ענק .נסע רק לעבודה ובית שמורה 24,000 ק"מ
-      נסיעות רחוקות נוסע 5.0 ל100 km שותה 1 ל 20 -18 בעיר 1 ל 13-15
-      שווה כל שקל !!!!!!רק לרציניים בלבד`,
-      postDate: "09.06.2020",
-    },
-  ];
+// export async function getAds() {
+//   return [
+//     {
+//       userID: 1,
+//       id: 1,
+//       manufacturer: "יונדאי",
+//       model: "טוסון",
+//       year: "2020-02-12",
+//       owners: 2,
+//       gear: "אוטומטי",
+//       km: "1,200",
+//       city: "נשר",
+//       color: "לבן",
+//       price: "120,000",
+//       phone: "050-2737204",
+//       images: [
+//         "https://www.galileasing.co.il/wp-content/uploads/2018/05/TUCSON.jpg",
+//         "http://www.carcost.co.il/Images/VehicleSubModelOptimizedImages/3062-7865.jpg",
+//         "https://www.kvishim.co.il/wp-content/uploads/images-007/Tucson-2016.jpg",
+//         "https://big-lease.co.il/wp-content/uploads/2019/10/Hyundai-Tucson-6.jpg",
+//       ],
+//       description: `רכב חדש אחריות עד 30/7/22 בניסאן מצלמה אחורית מולטימדיה חימום
+//       מושבים שלט חכם בגז' ענק .נסע רק לעבודה ובית שמורה 24,000 ק"מ
+//       נסיעות רחוקות נוסע 5.0 ל100 km שותה 1 ל 20 -18 בעיר 1 ל 13-15
+//       שווה כל שקל !!!!!!רק לרציניים בלבד`,
+//       postDate: "02.12.2018",
+//     },
+//     {
+//       userID: 2,
+//       id: 2,
+//       manufacturer: "סוזוקי",
+//       model: "גימיני",
+//       year: "2020-02-12",
+//       city: "נתניה",
+//       owners: 3,
+//       gear: "אוטומטי",
+//       km: "120,000",
+//       color: "שחור",
+//       price: "65,000",
+//       phone: "050-2737204",
+//       images: [
+//         "https://img.favcars.com/suzuki/jimny/suzuki_jimny_2007_wallpapers_1_b.jpg",
+//         "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS3mK3ZmCS9ulOhEMPj-U1RRrvndTIT83Xjm7ckZ_1a4ljdpXEdgsFFfXiAdXuWBPc2z5o&usqp=CAU",
+//         "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRbjgv3jdu457TTjJ9Q30YkSrNyWCHK558i8Ap6mbfmVQ_baRzslbnyqirIn6qQ7ndv-rA&usqp=CAU",
+//       ],
+//       description: `רכב חדש אחריות עד 30/7/22 בניסאן מצלמה אחורית מולטימדיה חימום
+//       מושבים שלט חכם בגז' ענק .נסע רק לעבודה ובית שמורה 24,000 ק"מ
+//       נסיעות רחוקות נוסע 5.0 ל100 km שותה 1 ל 20 -18 בעיר 1 ל 13-15
+//       שווה כל שקל !!!!!!רק לרציניים בלבד`,
+//       postDate: "09.06.2020",
+//     },
+//     {
+//       userID: 1,
+//       id: 3,
+//       manufacturer: "פיג'ו",
+//       model: "GMAX 250",
+//       year: "2012-02-12",
+//       city: "קרית שמונה",
+//       owners: 3,
+//       km: "12,000",
+//       color: "לבן",
+//       price: "12,000",
+//       phone: "050-3434231",
+//       images: [
+//         "http://1.bp.blogspot.com/-MUNRWFJiAwU/UxNoIlUgd7I/AAAAAAAAAJk/6WD_yYHiNys/s1600/IMG_0307.JPG",
+//       ],
+//       description: `רכב חדש אחריות עד 30/7/22 בניסאן מצלמה אחורית מולטימדיה חימום
+//       מושבים שלט חכם בגז' ענק .נסע רק לעבודה ובית שמורה 24,000 ק"מ
+//       נסיעות רחוקות נוסע 5.0 ל100 km שותה 1 ל 20 -18 בעיר 1 ל 13-15
+//       שווה כל שקל !!!!!!רק לרציניים בלבד`,
+//       postDate: "09.06.2020",
+//     },
+//   ];
+// }
+
+export async function getAds(orderBy, desc, categories) {
+  let categoriesQuery = "";
+  categories.forEach((category, index, arr) => {
+    if ((index === 0 && arr.length === 1) || index + 1 === arr.length) {
+      categoriesQuery += `categoryID[]=${category}`;
+    } else {
+      categoriesQuery += `categoryID[]=${category}&`;
+    }
+  });
+  const data = await fetch(
+    `${serverHost}/ads?orderBy=${orderBy}&desc=${desc}${
+      categoriesQuery ? `&${categoriesQuery}` : ""
+    }`
+  );
+  const ads = await data.json();
+  return ads;
 }
 
 export async function getCategories() {
-  return [
-    {
-      categoryID: 1,
-      categoryName: "רכב פרטי",
-    },
-    {
-      categoryID: 3,
-      categoryName: "אופנוע",
-    },
-    {
-      categoryID: 4,
-      categoryName: "ג'יפ",
-    },
-  ];
+  const data = await fetch(`${serverHost}/cars`);
+  const categories = await data.json();
+  return categories;
 }
 
 export async function getManufacturer(categoryID) {
-  const manufacturerByCategories = {
-    1: [
-      { manufacturerID: 1, manufacturerName: "יונדאי" },
-      { manufacturerID: 2, manufacturerName: "פולסווגן" },
-    ],
-    3: [
-      { manufacturerID: 3, manufacturerName: "פיגו" },
-      { manufacturerID: 4, manufacturerName: "במוו" },
-    ],
-    4: [
-      { manufacturerID: 5, manufacturerName: "סוזוקי" },
-      { manufacturerID: 6, manufacturerName: "Jeep" },
-    ],
-  };
-
-  return manufacturerByCategories[categoryID];
+  const data = await fetch(
+    `${serverHost}/cars/manufacturers?categoryID=${categoryID}`
+  );
+  const manufacturers = await data.json();
+  return manufacturers;
 }
 
 export async function getModels(categoryID, manufacturerID) {
-  const modelsObj = {
-    1: [
-      {
-        manufacturerID: 1,
-        manufacturerName: "יונדאי",
-        modelID: 1,
-        modelName: "i10",
-      },
-      {
-        manufacturerID: 2,
-        manufacturerName: "פולסווגן",
-        modelID: 2,
-        modelName: "פולו",
-      },
-    ],
-    3: [
-      {
-        manufacturerID: 3,
-        manufacturerName: "פיגו",
-        modelID: 3,
-        modelName: "GMAX 125",
-      },
-      {
-        manufacturerID: 4,
-        manufacturerName: "במוו",
-        modelID: 4,
-        modelName: "דגם במוו",
-      },
-    ],
-    4: [
-      {
-        manufacturerID: 5,
-        manufacturerName: "סוזוקי",
-        modelID: 5,
-        modelName: "גימיני",
-      },
-      {
-        manufacturerID: 6,
-        manufacturerName: "Jeep",
-        modelID: 6,
-        modelName: "רנגלר",
-      },
-    ],
-  };
-
-  return modelsObj[categoryID].filter(({ manufacturerID: dataID }) => {
-    return +dataID === +manufacturerID;
-  });
+  const data = await fetch(
+    `${serverHost}/cars/models?categoryID=${categoryID}&manufacturerID=${manufacturerID}`
+  );
+  const models = await data.json();
+  return models;
 }
 
 export async function getGears() {
-  return [
-    { gearID: 1, gearName: "ידני" },
-    { gearID: 2, gearName: "אוטומטי" },
-  ];
+  const data = await fetch(`${serverHost}/cars/gears`);
+  const gears = await data.json();
+  return gears;
 }
 
 function fetchCities() {
@@ -335,14 +286,43 @@ export function logInCheck(email, password) {
   });
 }
 
-export function getAdByID(adID) {
-  return getAdEditData().then((ads) => {
-    const adData = ads.find((ad) => {
-      return +ad.id === +adID;
-    });
+// export function getAdByID(adID) {
+//   return getAdEditData().then((ads) => {
+//     const adData = ads.find((ad) => {
+//       return +ad.id === +adID;
+//     });
 
-    return Promise.resolve(adData);
-  });
+//     return Promise.resolve(adData);
+//   });
+// }
+
+export async function getAdByID(adID) {
+  const data = await fetch(`${serverHost}/ads?adID=${adID}`);
+  const [
+    {
+      adid: id,
+      manufacturername: manufacturer,
+      gearname: gear,
+      modelname: model,
+      colorname: color,
+      modelyear: year,
+      codeArea,
+      carprice: price,
+      ...rest
+    },
+  ] = await data.json();
+  const phone = `${codeArea}-${rest.phone}`;
+  return {
+    id,
+    manufacturer,
+    gear,
+    model,
+    color,
+    year,
+    price,
+    ...rest,
+    phone,
+  };
 }
 
 function getAdsByID(adsIDs) {
@@ -364,32 +344,34 @@ export function sendNewAD(adData) {
 }
 
 export async function getMyAds(userID) {
-  const allAds = await getAds();
-  const myAds = allAds.filter(({ userID: currentAdID }) => {
-    return currentAdID === userID;
-  });
-
-  return myAds;
+  try {
+    const data = await fetch(`${serverHost}/ads?userID=${userID}`);
+    const myAds = await data.json();
+    return myAds;
+  } catch (err) {
+    console.log(err);
+  }
 }
 
 export async function getMyFaivoritesAds(userID) {
-  const likeAdsIDs = await getIDsOfFaivoritesAds(userID);
-  const favoritesAds = await getAdsByID(likeAdsIDs);
-  return favoritesAds;
+  const data = await fetch(`${serverHost}/ads/favorites?userID=${userID}`);
+  const [adIDs, adData] = await data.json();
+
+  return [
+    adIDs.map(({ adID }) => {
+      return adID;
+    }),
+    adData,
+  ];
 }
 
 export async function getIDsOfFaivoritesAds(userID) {
-  const likeAdsIDs = await Promise.resolve(
-    faivoriteAdsByUser
-      .filter((ad) => {
-        return userID === ad.userID;
-      })
-      .map((ad) => {
-        return ad.adID;
-      })
-  );
+  const data = await fetch(`${serverHost}/ads/favorites?userID=${userID}`);
+  const likeAdsIDs = await data.json();
 
-  return likeAdsIDs;
+  return likeAdsIDs[0].map(({ adID }) => {
+    return adID;
+  });
 }
 
 export async function updateFaivoriesAds(userID, adID) {
@@ -407,10 +389,6 @@ export async function updateFaivoriesAds(userID, adID) {
   return getIDsOfFaivoritesAds(userID).then((idsOfFaivoritesAds) => {
     return idsOfFaivoritesAds;
   });
-}
-
-function getAdsByPage(pageNum, limit = 2) {
-  return Promise.resolve();
 }
 
 export async function getAreaCodes() {

@@ -6,11 +6,12 @@ import { useEffect, useState } from "react";
 import CarItem from "../Components/CarItem";
 export default function FavoritesAdsPage({ setCountFavoritesAds }) {
   const [myFavoriesAds, setMyFavoriesAds] = useState([]);
-  useEffect(() => {
+  const [adsIDs, setAdsIDs] = useState([]);
+  useEffect(async () => {
     const { userID } = JSON.parse(localStorage.getItem("currentUser"));
-    getMyFaivoritesAds(userID).then((ads) => {
-      setMyFavoriesAds([...ads]);
-    });
+    const [adsIDs, adsData] = await getMyFaivoritesAds(userID);
+    setMyFavoriesAds([...adsData]);
+    setAdsIDs([...adsIDs]);
   }, []);
   return (
     <Container fluid="sm">
@@ -32,6 +33,7 @@ export default function FavoritesAdsPage({ setCountFavoritesAds }) {
               setCountFavoritesAds={setCountFavoritesAds}
               cardDetails={ad}
               setMyFavoriesAds={setMyFavoriesAds}
+              likesIDs={adsIDs}
             />
           );
         })}

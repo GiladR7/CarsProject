@@ -17,47 +17,45 @@ import {
 } from "../DAL/api";
 export default function CarItem({
   cardDetails: {
-    id,
-    manufacturer,
-    model,
-    year,
+    adid: id,
+    manufacturername: manufacturer,
+    modelname: model,
+    modelyear: year,
     owners,
-    gear,
+    gearname: gear,
     km,
-    price,
+    carprice: price,
     images,
     city,
-    postDate,
+    adDate: postDate,
     userID,
+    views,
   },
   isLogIn,
-  setMyFavoriesAds = false,
-  setCountFavoritesAds = false,
+  likesIDs,
 }) {
-  const [likeAdsIDs, setLikeAdsIDs] = useState([]);
   const history = useHistory();
   const onlineUser = JSON.parse(localStorage.getItem("currentUser"));
-  useEffect(() => {
-    if (onlineUser && setCountFavoritesAds) {
-      getIDsOfFaivoritesAds(onlineUser.userID).then((likesIDs) => {
-        setCountFavoritesAds(likesIDs.length);
-        setLikeAdsIDs(likesIDs);
-      });
-    }
-  }, [isLogIn]);
+  // useEffect(async () => {
+  //   if (onlineUser && setCountFavoritesAds) {
+  //     const likesIDs = await getIDsOfFaivoritesAds(onlineUser.userID);
+  //     setCountFavoritesAds(likesIDs.length);
+  //     setLikeAdsIDs(likesIDs);
+  //   }
+  // }, [isLogIn]);
 
-  function updateLikesAdOnClick() {
-    updateFaivoriesAds(onlineUser.userID, id).then((faivoriteAdsByUser) => {
-      setCountFavoritesAds(faivoriteAdsByUser.length);
-      setLikeAdsIDs(faivoriteAdsByUser);
+  // function updateLikesAdOnClick() {
+  //   updateFaivoriesAds(onlineUser.userID, id).then((faivoriteAdsByUser) => {
+  //     setCountFavoritesAds(faivoriteAdsByUser.length);
+  //     setLikeAdsIDs(faivoriteAdsByUser);
 
-      if (setMyFavoriesAds) {
-        getMyFaivoritesAds(onlineUser.userID).then((ads) => {
-          setMyFavoriesAds([...ads]);
-        });
-      }
-    });
-  }
+  //     if (setMyFavoriesAds) {
+  //       getMyFaivoritesAds(onlineUser.userID).then((ads) => {
+  //         setMyFavoriesAds([...ads]);
+  //       });
+  //     }
+  //   });
+  // }
   return (
     <div style={{ width: "19rem" }} className="card-car-container">
       <Card
@@ -75,10 +73,10 @@ export default function CarItem({
           {onlineUser && onlineUser.userID !== userID && (
             <FontAwesomeIcon
               className="love-post fas"
-              icon={likeAdsIDs.includes(id) ? faHeart : icons.faHeart}
-              onClick={() => {
-                updateLikesAdOnClick();
-              }}
+              icon={likesIDs.includes(id) ? faHeart : icons.faHeart}
+              // onClick={() => {
+              //   updateLikesAdOnClick();
+              // }}
             ></FontAwesomeIcon>
           )}
           <img className="card-img" src={images[0]} alt="car-img" />
@@ -93,7 +91,8 @@ export default function CarItem({
             </Col>
             <Col className="col-4">
               <p>
-                <FontAwesomeIcon icon={faEye} style={{ color: "#2196f3" }} /> 10
+                <FontAwesomeIcon icon={faEye} style={{ color: "#2196f3" }} />{" "}
+                {views}
               </p>
             </Col>
           </Row>
@@ -110,7 +109,8 @@ export default function CarItem({
             </Col>
             <Col>
               <p>
-                <FontAwesomeIcon icon={faCalendarAlt} /> {postDate}
+                <FontAwesomeIcon icon={faCalendarAlt} />{" "}
+                {postDate.split("T")[0]}
               </p>
             </Col>
           </Row>
@@ -122,7 +122,7 @@ export default function CarItem({
           <Row className="text-center card-details">
             <Col>
               <p>שנה</p>
-              <p>{year.split("-")[0]}</p>
+              <p>{year}</p>
             </Col>
             <Col>
               <p>יד</p>

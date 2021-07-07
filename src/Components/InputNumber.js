@@ -11,6 +11,8 @@ export default function InputNumber({
   placeholderText,
   updateLocal,
   required,
+  errors,
+  valid,
 }) {
   return (
     <Form.Group controlId={htmlFor}>
@@ -18,6 +20,7 @@ export default function InputNumber({
       <InputGroup hasValidation>
         <Form.Control
           type="number"
+          isInvalid={!valid}
           placeholder={placeholderText}
           onChange={(e) => {
             const isDisable = changeInput(e.target);
@@ -29,6 +32,15 @@ export default function InputNumber({
           max={maxNumber}
           required={required}
         />
+        <Form.Control.Feedback
+          role="alert"
+          className="fade alert alert-danger show"
+          type="invalid"
+        >
+          {errors.map((error, index) => {
+            return <p key={index}>{error}</p>;
+          })}
+        </Form.Control.Feedback>
       </InputGroup>
     </Form.Group>
   );

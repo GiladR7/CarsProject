@@ -1,18 +1,29 @@
+import { useEffect, useState } from "react";
 import { Container } from "react-bootstrap";
 import { faHeart } from "@fortawesome/free-solid-svg-icons";
-import { getMyFaivoritesAds } from "../DAL/api";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useEffect, useState } from "react";
+
+import { getMyFaivoritesAds } from "../DAL/api";
 import CarItem from "../Components/CarItem";
-export default function FavoritesAdsPage({ setCountFavoritesAds }) {
+
+export default function FavoritesAdsPage({
+  countFavoritesAds,
+  setCountFavoritesAds,
+}) {
   const [myFavoriesAds, setMyFavoriesAds] = useState([]);
   const [adsIDs, setAdsIDs] = useState([]);
-  useEffect(async () => {
+
+  const getFavorites = async () => {
     const { userID } = JSON.parse(localStorage.getItem("currentUser"));
     const [adsIDs, adsData] = await getMyFaivoritesAds(userID);
     setMyFavoriesAds([...adsData]);
     setAdsIDs([...adsIDs]);
-  }, []);
+  };
+
+  useEffect(() => {
+    getFavorites();
+  }, [countFavoritesAds]);
+
   return (
     <Container fluid="sm">
       <div className="header-like-ads mb-3">
@@ -30,9 +41,10 @@ export default function FavoritesAdsPage({ setCountFavoritesAds }) {
           return (
             <CarItem
               key={index}
-              setCountFavoritesAds={setCountFavoritesAds}
+              updateLikesNav={setCountFavoritesAds}
               cardDetails={ad}
               setMyFavoriesAds={setMyFavoriesAds}
+              setLikeAdsIDs={setAdsIDs}
               likesIDs={adsIDs}
             />
           );

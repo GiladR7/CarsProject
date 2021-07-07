@@ -36,16 +36,22 @@ export default function AddCarParse1() {
       {
         cartype: {
           value: "",
+          isValid: true,
+          errors: [],
         },
         manufactur: {
           value: "",
           isDisabled: true,
           selectList: [],
+          isValid: true,
+          errors: [],
         },
         model: {
           value: "",
           isDisabled: true,
           selectList: [],
+          isValid: true,
+          errors: [],
         },
       },
       setBtnDidable

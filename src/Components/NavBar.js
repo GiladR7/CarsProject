@@ -6,6 +6,7 @@ import {
   faUserCircle,
   faCarSide,
 } from "@fortawesome/free-solid-svg-icons";
+import { getIDsOfFaivoritesAds } from "../DAL/api";
 import { useEffect, useState } from "react";
 
 export default function MyNavbar({
@@ -14,6 +15,7 @@ export default function MyNavbar({
   setShowLogIn,
   numberOfFavorites,
   location,
+  setNumberOfFavories,
 }) {
   const history = useHistory();
 
@@ -37,6 +39,13 @@ export default function MyNavbar({
       active: false,
     },
   });
+  const onlineUser = JSON.parse(localStorage.getItem("currentUser"));
+  async function getNumberOfLikes() {
+    if (onlineUser) {
+      const likes = await getIDsOfFaivoritesAds(onlineUser.userID);
+      setNumberOfFavories(likes.length);
+    }
+  }
   function activeLinkOnChange(path) {
     if (
       Object.keys(activeLink).includes(path.slice(1)) ||
@@ -61,6 +70,7 @@ export default function MyNavbar({
   }
   useEffect(() => {
     restActive();
+    getNumberOfLikes();
     activeLinkOnChange(location.pathname);
   }, [location.pathname]);
   return (

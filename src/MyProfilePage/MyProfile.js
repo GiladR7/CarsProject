@@ -1,11 +1,17 @@
 import { Container, Form, Button } from "react-bootstrap";
-import { sendNewUser } from "../DAL/api";
-import { validationFunc, inputOnChange } from "../utilities/validationsFunc";
-import InputTextInLine from "../Components/InputTextInLine";
-import { checkBoxOnChange } from "../utilities/utilities";
-import CheckBoxGroup from "../Components/CheckBoxGroup";
 import { useState } from "react";
 import { useHistory } from "react-router";
+
+import InputTextInLine from "../Components/InputTextInLine";
+import { updateUserDeatils } from "../DAL/api";
+import {
+  validationFunc,
+  inputOnChange,
+  checkInputChangeBeforeSubmit,
+} from "../utilities/validationsFunc";
+import { checkBoxOnChange } from "../utilities/utilities";
+import CheckBoxGroup from "../Components/CheckBoxGroup";
+
 export default function MyProfile() {
   const userDetails = {
     user: {
@@ -26,20 +32,23 @@ export default function MyProfile() {
     },
   };
 
+  const [error, setError] = useState();
+  const [updateSuccess, setUpdateSuccess] = useState("");
+  const userDataFromLocal = JSON.parse(localStorage.getItem("currentUser"));
   const history = useHistory();
 
   function setInputDataFromLocal() {
-    const userDataFromLocal = JSON.parse(localStorage.getItem("currentUser"));
     if (userDataFromLocal) {
       for (const key in userDetails) {
         userDetails[key].value = userDataFromLocal[key];
       }
-
       return userDetails;
     }
+
     history.push("/");
     return userDetails;
   }
+
   const [isDisabled, setisDisabled] = useState(false);
   const [inputsValues, setInputsValues] = useState(() => {
     return setInputDataFromLocal();
@@ -54,14 +63,32 @@ export default function MyProfile() {
     setisDisabled
   );
 
-  function onsubmit(e) {
-    const fieldsData = {};
+  async function onsubmit(e) {
     e.preventDefault();
-    for (const key in inputsValues) {
-      fieldsData[key] = inputsValues[key].value;
+    setUpdateSuccess("");
+
+    if (checkInputChangeBeforeSubmit(inputsValues, userDataFromLocal)) {
+      const {
+        data,
+        message,
+        inputsValues: inputsSeverValidation,
+      } = await updateUserDeatils(userDataFromLocal.userID, inputsValues);
+
+      if (inputsSeverValidation) {
+        setInputsValues({ ...inputsSeverValidation });
+      } else if (message) {
+        setError(message);
+      } else if (data) {
+        const [updateDetails] = data;
+        localStorage.setItem("currentUser", JSON.stringify(updateDetails));
+        setUpdateSuccess("עודכן בהצלחה");
+        setError("");
+      }
+    } else {
+      setError("אף שדה לא עודכן");
     }
-    sendNewUser(fieldsData);
   }
+
   const changeInput = inputOnChange(inputsValues, setInputsValues);
   return (
     <Container fluid>
@@ -97,8 +124,8 @@ export default function MyProfile() {
           checkBoxValues={inputsValues.chooseCategory.value}
           checkboxsValuesArr={[
             ["רכבים פרטיים", 1],
-            ["אופנועיים", 3],
-            ["גיפים", 4],
+            ["אופנועים", 3],
+            ["ג'יפים", 4],
           ]}
           name="chooseCategory"
           onChecked={updateCheckBoxSelected}
@@ -107,6 +134,16 @@ export default function MyProfile() {
         <Button variant="primary" type="submit" disabled={isDisabled}>
           עדכן פרטים
         </Button>
+        {error && (
+          <p role="alert" className="fade alert alert-danger show mt-2">
+            {error}
+          </p>
+        )}
+        {updateSuccess && (
+          <p role="alert" className="fade alert alert-success show mt-2">
+            {updateSuccess}
+          </p>
+        )}
       </Form>
     </Container>
   );

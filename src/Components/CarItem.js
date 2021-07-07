@@ -9,12 +9,8 @@ import { Card, Button, Col, Row } from "react-bootstrap";
 import * as icons from "@fortawesome/free-regular-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useHistory } from "react-router";
-import { useEffect, useState } from "react";
-import {
-  getIDsOfFaivoritesAds,
-  updateFaivoriesAds,
-  getMyFaivoritesAds,
-} from "../DAL/api";
+import carDefaultPhoto from "../images/buyCar2.jpg";
+import { addNewFavoritesAd, removeAdFromFavorites } from "../DAL/api";
 export default function CarItem({
   cardDetails: {
     adid: id,
@@ -31,31 +27,23 @@ export default function CarItem({
     userID,
     views,
   },
-  isLogIn,
   likesIDs,
+  setLikeAdsIDs,
+  updateLikesNav = false,
 }) {
   const history = useHistory();
   const onlineUser = JSON.parse(localStorage.getItem("currentUser"));
-  // useEffect(async () => {
-  //   if (onlineUser && setCountFavoritesAds) {
-  //     const likesIDs = await getIDsOfFaivoritesAds(onlineUser.userID);
-  //     setCountFavoritesAds(likesIDs.length);
-  //     setLikeAdsIDs(likesIDs);
-  //   }
-  // }, [isLogIn]);
 
-  // function updateLikesAdOnClick() {
-  //   updateFaivoriesAds(onlineUser.userID, id).then((faivoriteAdsByUser) => {
-  //     setCountFavoritesAds(faivoriteAdsByUser.length);
-  //     setLikeAdsIDs(faivoriteAdsByUser);
-
-  //     if (setMyFavoriesAds) {
-  //       getMyFaivoritesAds(onlineUser.userID).then((ads) => {
-  //         setMyFavoriesAds([...ads]);
-  //       });
-  //     }
-  //   });
-  // }
+  const updateLikeAds = async () => {
+    let likeAdIDs;
+    if (likesIDs.includes(id)) {
+      likeAdIDs = await removeAdFromFavorites(id, onlineUser.userID);
+    } else {
+      likeAdIDs = await addNewFavoritesAd(id, onlineUser.userID);
+    }
+    updateLikesNav(likeAdIDs.length);
+    setLikeAdsIDs([...likeAdIDs]);
+  };
   return (
     <div style={{ width: "19rem" }} className="card-car-container">
       <Card
@@ -73,13 +61,23 @@ export default function CarItem({
           {onlineUser && onlineUser.userID !== userID && (
             <FontAwesomeIcon
               className="love-post fas"
+              style={{
+                cursor: "pointer",
+                backgroundColor: "white",
+                borderRadius: "50%",
+                padding: "6px",
+              }}
               icon={likesIDs.includes(id) ? faHeart : icons.faHeart}
-              // onClick={() => {
-              //   updateLikesAdOnClick();
-              // }}
+              onClick={() => {
+                updateLikeAds();
+              }}
             ></FontAwesomeIcon>
           )}
-          <img className="card-img" src={images[0]} alt="car-img" />
+          <img
+            className="card-img"
+            src={images[0] ? images[0] : carDefaultPhoto}
+            alt="car-img"
+          />
         </div>
 
         <Card.Body className="text-center">

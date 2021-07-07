@@ -11,24 +11,25 @@ import {
   faSortAmountUpAlt,
   faSortAmountDownAlt,
   faMoneyBill,
-  faHotJar,
   faCalendarAlt,
 } from "@fortawesome/free-solid-svg-icons";
+
 import CheckBoxGroup from "../Components/CheckBoxGroup";
 import { getAds, getIDsOfFaivoritesAds } from "../DAL/api";
 import CarItem from "../Components/CarItem";
 import { checkBoxOnChange } from "../utilities/utilities";
 import { faHotjar } from "@fortawesome/free-brands-svg-icons";
+import { getByDisplayValue } from "@testing-library/react";
 
 export default function HomePage({ setCountFavoritesAds, isLogIn }) {
   const [ads, setAds] = useState([]);
   const onlineUser = JSON.parse(localStorage.getItem("currentUser"));
   const [orderHeigher, setOrderHeigher] = useState("true");
   const [orderBy, setOrdetBy] = useState("adDate");
+  const [likeAds, setLikeAds] = useState([]);
   const [checkBoxValues, setCheckBoxValues] = useState(() => {
     return updateUserCategories();
   });
-  const [likesIDs, setLikeAdsIDs] = useState([]);
 
   function updateUserCategories() {
     const categories = {
@@ -40,38 +41,44 @@ export default function HomePage({ setCountFavoritesAds, isLogIn }) {
       const { chooseCategory } = JSON.parse(
         localStorage.getItem("currentUser")
       );
+
       categories.chooseCategory.value = chooseCategory;
     }
     return categories;
   }
   useEffect(() => {
     async function showAds() {
-      const adsData = await getAds(
+      const respone = await getAds(
         orderBy,
         orderHeigher,
         checkBoxValues.chooseCategory.value
       );
-      setAds([...adsData]);
+      if (respone.status === "ok") {
+        setAds([...respone.data]);
+      }
     }
     showAds();
   }, [orderBy, orderHeigher, checkBoxValues]);
 
-  useEffect(async () => {
+  useEffect(() => {
     if (onlineUser) {
-      const likesIDs = await getIDsOfFaivoritesAds(onlineUser.userID);
-      setCountFavoritesAds(likesIDs.length);
-      setLikeAdsIDs(likesIDs);
+      const {
+        chooseCategory: { value },
+      } = updateUserCategories();
+      checkBoxValues.chooseCategory.value = value;
+      setCheckBoxValues((checkBoxValues) => {
+        return { ...checkBoxValues };
+      });
+      getLikeAdsIds();
     }
   }, [isLogIn]);
-
-  useEffect(() => {
-    const {
-      chooseCategory: { value },
-    } = updateUserCategories();
-    checkBoxValues.chooseCategory.value = value;
-    setCheckBoxValues({ ...checkBoxValues });
-  }, [isLogIn]);
-
+  const [file, setFile] = useState();
+  const [image, setImage] = useState();
+  async function getLikeAdsIds() {
+    const adsIds = await getIDsOfFaivoritesAds(onlineUser.userID);
+    setLikeAds([...adsIds]);
+    setCountFavoritesAds(adsIds.length);
+  }
   const updateCheckBoxSelected = checkBoxOnChange(
     checkBoxValues,
     setCheckBoxValues
@@ -97,34 +104,18 @@ export default function HomePage({ setCountFavoritesAds, isLogIn }) {
             type="radio"
             name="sortBy"
             value={orderBy}
+            onChange={(value) => setOrdetBy(value)}
           >
-            <ToggleButton
-              value="adDate"
-              className="sortByBtn"
-              variant="info"
-              onClick={(e) => {
-                setOrdetBy(e.target.value);
-              }}
-            >
+            <ToggleButton value="adDate" className="sortByBtn" variant="info">
               תאריך <FontAwesomeIcon icon={faCalendarAlt} />
             </ToggleButton>
-            <ToggleButton
-              value="views"
-              className="sortByBtn "
-              variant="danger"
-              onClick={(e) => {
-                setOrdetBy(e.target.value);
-              }}
-            >
+            <ToggleButton value="views" className="sortByBtn " variant="danger">
               פופולאריות <FontAwesomeIcon icon={faHotjar} />
             </ToggleButton>
             <ToggleButton
               value="carprice"
               className="sortByBtn "
               variant="success"
-              onClick={(e) => {
-                setOrdetBy(e.target.value);
-              }}
             >
               מחיר <FontAwesomeIcon icon={faMoneyBill} />
             </ToggleButton>
@@ -157,8 +148,8 @@ export default function HomePage({ setCountFavoritesAds, isLogIn }) {
           checkBoxValues={checkBoxValues.chooseCategory.value}
           checkboxsValuesArr={[
             ["רכבים פרטיים", 1],
-            ["אופנועיים", 3],
-            ["גיפים", 4],
+            ["אופנועים", 3],
+            ["ג'יפים", 4],
           ]}
           name="chooseCategory"
           onChecked={updateCheckBoxSelected}
@@ -171,13 +162,44 @@ export default function HomePage({ setCountFavoritesAds, isLogIn }) {
             <CarItem
               key={index}
               cardDetails={ad}
-              // setCountFavoritesAds={setCountFavoritesAds}
-              isLogIn={isLogIn}
-              likesIDs={likesIDs}
+              likesIDs={likeAds}
+              setLikeAdsIDs={setLikeAds}
+              updateLikesNav={setCountFavoritesAds}
             />
           );
         })}
       </div>
+
+      <form
+        enctype="multipart/form-data"
+        onSubmit={async (e) => {
+          e.preventDefault();
+          const data = new FormData();
+          for (let i = 0; i < file.length; i++) {
+            data.append("photos", file[i]);
+          }
+          data.append("name", "gilad");
+          const respone = await fetch("http://localhost:5000/upload", {
+            method: "POST",
+            body: data,
+          });
+          console.log(respone);
+          setImage(respone);
+        }}
+      >
+        <input
+          type="file"
+          name="avatar"
+          multiple
+          accept="image/png, image/jpeg"
+          onChange={(e) => {
+            console.log(e.target.files);
+            return setFile(e.target.files);
+          }}
+        />
+        <img src="http://localhost:5000/carImages/photos-1625671615753.jpg" />
+        <button> submit </button>
+      </form>
     </Container>
   );
 }

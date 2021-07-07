@@ -1,12 +1,16 @@
 import { Container, Form, Button } from "react-bootstrap";
+import { useState } from "react";
+import { useHistory } from "react-router";
+
 import { sendNewUser } from "../DAL/api";
 import { validationFunc, inputOnChange } from "../utilities/validationsFunc";
 import InputTextInLine from "../Components/InputTextInLine";
 import CheckBoxGroup from "../Components/CheckBoxGroup";
 import { checkBoxOnChange } from "../utilities/utilities";
-import { useState } from "react";
 export default function Registration() {
+  const history = useHistory();
   const [isDisabled, setisDisabled] = useState(true);
+  const [serverError, setServerError] = useState("");
   const [inputsValues, setInputsValues] = useState({
     user: {
       value: "",
@@ -44,13 +48,23 @@ export default function Registration() {
     setInputsValues
   );
 
-  function onsubmit(e) {
-    const fieldsData = {};
+  async function onsubmit(e) {
     e.preventDefault();
-    for (const key in inputsValues) {
-      fieldsData[key] = inputsValues[key].value;
+    const {
+      message,
+      inputValues: inputServerValidtion,
+      status,
+    } = await sendNewUser(inputsValues);
+
+    if (inputServerValidtion) {
+      console.log(inputServerValidtion);
+      setInputsValues({ ...inputServerValidtion });
+    } else if (message) {
+      setServerError(message);
+      setisDisabled(true);
+    } else if (status === "ok") {
+      history.push("/"); //add register sucess page
     }
-    sendNewUser(fieldsData);
   }
   const changeInput = inputOnChange(inputsValues, setInputsValues);
   return (
@@ -112,8 +126,8 @@ export default function Registration() {
           checkBoxValues={inputsValues.chooseCategory.value}
           checkboxsValuesArr={[
             ["רכבים פרטיים", 1],
-            ["אופנועיים", 3],
-            ["גיפים", 4],
+            ["אופנועים", 3],
+            ["ג'יפים", 4],
           ]}
           name="chooseCategory"
           onChecked={updateCheckBoxSelected}
@@ -122,6 +136,11 @@ export default function Registration() {
         <Button variant="primary" type="submit" disabled={isDisabled}>
           הירשם לאתר
         </Button>
+        {serverError && (
+          <p role="alert" className="fade alert alert-danger show mt-2">
+            {serverError}
+          </p>
+        )}
       </Form>
     </Container>
   );

@@ -5,6 +5,7 @@ import { getAdByID } from "../DAL/api";
 import { faPhone, faMoneyBillWave } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import CarouselCar from "./Carousel";
+
 export default function CarDetails() {
   const histoy = useHistory();
   const { id: adID } = useParams();
@@ -22,10 +23,14 @@ export default function CarDetails() {
     images: [],
     description: "",
   });
-  useEffect(async () => {
-    const ad = await getAdByID(adID);
-    setAdData({ ...ad });
-  }, []);
+
+  useEffect(() => {
+    async function fetchAdById() {
+      const respone = await getAdByID(adID);
+      if (respone.status === "ok") setAdData({ ...respone.data });
+    }
+    fetchAdById();
+  }, [adID]);
   return (
     <Container fluid className="mt-5 mb-3">
       <div className="carDetials-container">

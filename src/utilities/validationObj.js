@@ -28,14 +28,15 @@ export const validation = {
     customError: "סיסמא לא תואמת",
   },
 
-  owners: {
-    required: true,
-  },
   year: {
     required: true,
-  },
-  km: {
-    required: true,
+    requiredError: "שנת הרכב הוא שדה חובה",
+    funcValidation(year) {
+      const d = new Date();
+      year = year.split("-")[0];
+      return 1950 > year || year > d.getFullYear();
+    },
+    customError: `ניתן לעלות רכב בין השנים ${new Date().getFullYear()} - ${1950}`,
   },
   color: {
     required: true,
@@ -67,5 +68,29 @@ export const validation = {
   },
   moreDetails: {
     required: false,
+  },
+  price: {
+    required: true,
+    funcValidation(price) {
+      return price < 0 || price > 10000000;
+    },
+    requiredError: "מחיר הרכב הוא שדה חובה",
+    customError: "המחיר המקסימלי הוא 10,000,000",
+  },
+  km: {
+    required: true,
+    funcValidation(km) {
+      return km < 0 || km > 500000;
+    },
+    requiredError: "מספר הקילומטרים הוא שדה חובה",
+    customError: "הקילומטרז המקסימלי הוא 500,000",
+  },
+  owners: {
+    required: true,
+    funcValidation(owners) {
+      return owners < 0 || owners > 10;
+    },
+    requiredError: "יד הרכב הוא שדה חובה",
+    customError: "מספר הבעלים המקסימלי הוא 10",
   },
 };

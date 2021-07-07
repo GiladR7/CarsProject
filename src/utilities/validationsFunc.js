@@ -39,7 +39,6 @@ export function validationFunc(
       setisDisabled,
       chooseCategory ? chooseCategory : ""
     );
-
     setInputsValues({
       ...inputsValues,
     });
@@ -72,4 +71,34 @@ export function inputOnChange(inputsValues, setInputsValues, setBtnDisable) {
       ...inputsValues,
     });
   };
+}
+
+function checkChooseCategoryChange(arr1, arr2) {
+  if (arr1.length !== arr2.length) {
+    return true;
+  }
+  for (const value of arr1) {
+    if (!arr2.includes(value)) {
+      return true;
+    }
+  }
+  return false;
+}
+
+export function checkInputChangeBeforeSubmit(inputsValues, userDataFromLocal) {
+  for (const key in inputsValues) {
+    if (userDataFromLocal[key] !== inputsValues[key].value) {
+      if (
+        key === "chooseCategory" &&
+        !checkChooseCategoryChange(
+          userDataFromLocal[key],
+          inputsValues[key].value
+        )
+      ) {
+        continue;
+      }
+      return true;
+    }
+  }
+  return false;
 }

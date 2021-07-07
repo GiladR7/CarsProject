@@ -1,6 +1,6 @@
 import { Container, Form, Button, Col, Row, ListGroup } from "react-bootstrap";
 
-import { Link, useHistory, useParams } from "react-router-dom";
+import { useHistory, useParams } from "react-router-dom";
 import TextArea from "../Components/TextArea";
 import InputText from "../Components/InputText";
 import SelectInput from "../Components/SelectInput";
@@ -75,11 +75,15 @@ export default function EditCarAd() {
       isValid: true,
       errors: [],
     },
+    price: {
+      value: "",
+      isValid: true,
+      errors: [],
+    },
   });
   const { id } = useParams();
   useEffect(() => {
     getAdEditData(id).then((ad) => {
-      console.log(ad);
       for (const key in inputsValues) {
         if (key in ad) inputsValues[key].value = ad[key];
       }
@@ -115,7 +119,6 @@ export default function EditCarAd() {
   );
   function onsubmit(e) {
     e.preventDefault();
-    console.log(JSON.parse(localStorage.getItem("adCarData")));
     localStorage.removeItem("adCarData");
 
     histoy.push("/");
@@ -263,6 +266,22 @@ export default function EditCarAd() {
             />
           </Col>
           <Col md="6">
+            <InputNumber
+              htmlFor="price"
+              labelText="מחיר הרכב"
+              mixNumber="1"
+              maxNumber="10000000"
+              placeholderText="הכנס את מחיר הרכב"
+              value={inputsValues.price.value}
+              changeInput={validationInput}
+              name="price"
+              required={true}
+            />
+          </Col>
+        </Row>
+
+        <Row>
+          <Col md="6">
             {chooseCategory !== 3 && (
               <SelectInput
                 htmlFor="gear"
@@ -289,9 +308,10 @@ export default function EditCarAd() {
           inputOnChange={changeInput}
         />
         <div className="d-flex btn-parse2">
-          <Link className="btn btn-warning" to="/">
+          <button className="btn btn-warning" onClick={() => histoy.goBack()}>
             חזרה למודעות
-          </Link>
+          </button>
+
           <Button variant="primary" type="submit" disabled={isDisable}>
             עדכן מודעה
           </Button>

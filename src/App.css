@@ -39,7 +39,11 @@ body::before {
   right: 10px;
   top: 10px;
   color: #ffc107;
-  font-size: 18px;
+  cursor: pointer;
+  font-size: 30px;
+  background-color: #625656;
+  border-radius: 50%;
+  padding: 5px 6px 6px 7px;
 }
 
 .love-post {
@@ -47,7 +51,7 @@ body::before {
   left: 10px;
   top: 10px;
   color: red;
-  font-size: 18px;
+  font-size: 30px;
 }
 
 header .form-check-label {

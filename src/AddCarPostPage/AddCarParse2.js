@@ -25,6 +25,8 @@ export default function AddCarParse2() {
   const [isDisable, setIsDisable] = useState(true);
   const [chooseCategory, setChooseCategory] = useState("");
   const [selectAreaCodes, setSelectAreaCodes] = useState([]);
+  const [serverError, setServerError] = useState();
+  const onlineUser = JSON.parse(localStorage.getItem("currentUser"));
   const [inputsValues, setInputsValues] = useState(() => {
     return getItemLocal(
       "adCarData",
@@ -79,6 +81,11 @@ export default function AddCarParse2() {
           errors: [],
           cities: [],
         },
+        price: {
+          value: "",
+          isValid: true,
+          errors: [],
+        },
         moreDetails: {
           value: "",
           isValid: true,
@@ -127,7 +134,10 @@ export default function AddCarParse2() {
         setIsDisable,
         category
       );
-      validationInput({ name: "km", value: inputsValues.km.value });
+      validationInput({
+        name: "moreDetails",
+        value: inputsValues.moreDetails.value,
+      });
     }
   }, []);
 
@@ -146,28 +156,35 @@ export default function AddCarParse2() {
     setIsDisable
   );
 
-  function addValueData(insetObj, dataObj) {
-    for (const key in dataObj) {
-      insetObj[key] = dataObj[key].value;
-    }
-  }
-  function onsubmit(e) {
+  async function onsubmit(e) {
     e.preventDefault();
-    const adData = {};
     const { adDetails: Pashe2Data, carSelected: Pashe1Data } = JSON.parse(
       localStorage.getItem("adCarData")
     );
-    addValueData(adData, Pashe1Data);
-    addValueData(adData, Pashe2Data);
-    sendNewAD(adData);
 
-    localStorage.removeItem("adCarData");
+    const { message, newId, part2Validtion } = await sendNewAD(
+      onlineUser.userID,
+      Pashe1Data,
+      Pashe2Data
+    );
 
-    histoy.push("/");
+    if (part2Validtion) {
+      setInputsValues({ ...part2Validtion });
+      setServerError("");
+    } else if (message) {
+      setServerError(message);
+    } else if (newId) {
+      localStorage.removeItem("adCarData");
+      histoy.push("/");
+    }
   }
   return (
     <Container fluid>
-      <Form className="add-car-container" onSubmit={(e) => onsubmit(e)}>
+      <Form
+        className="add-car-container"
+        enctype="multipart/form-data"
+        onSubmit={(e) => onsubmit(e)}
+      >
         <Row>
           <Col md="6">
             <DateInput
@@ -177,9 +194,11 @@ export default function AddCarParse2() {
               maxDate={new Date().toISOString().slice(0, 10)}
               minDate={"1960-01-01"}
               value={inputsValues.year.value}
-              changeInput={validationInput}
+              changeInput={changeInput}
+              validation={validationInput}
               updateLocal={updateLocal}
-              required={true}
+              errors={inputsValues.year.errors}
+              valid={inputsValues.year.isValid}
             />
           </Col>
           <Col md="6">
@@ -190,6 +209,8 @@ export default function AddCarParse2() {
               maxNumber="10000000"
               placeholderText="הכנס קילומטרז"
               value={inputsValues.km.value}
+              errors={inputsValues.km.errors}
+              valid={inputsValues.km.isValid}
               changeInput={validationInput}
               name="km"
               updateLocal={updateLocal}
@@ -205,6 +226,8 @@ export default function AddCarParse2() {
               mixNumber="1"
               maxNumber="10"
               placeholderText="הכנס את יד הרכב"
+              errors={inputsValues.owners.errors}
+              valid={inputsValues.owners.isValid}
               value={inputsValues.owners.value}
               changeInput={validationInput}
               name="owners"
@@ -267,6 +290,7 @@ export default function AddCarParse2() {
                 id="validationFormik107"
                 placeholder="בחר קובץ"
                 onChange={(e) => {
+                  console.log(e.target.files);
                   const isDisable = validationInput({
                     value: e.target.files,
                     name: "file",
@@ -317,6 +341,24 @@ export default function AddCarParse2() {
             />
           </Col>
           <Col md="6">
+            <InputNumber
+              htmlFor="price"
+              labelText="מחיר הרכב"
+              mixNumber="1"
+              maxNumber="10000000"
+              placeholderText="הכנס את מחיר הרכב"
+              value={inputsValues.price.value}
+              errors={inputsValues.price.errors}
+              valid={inputsValues.price.isValid}
+              changeInput={validationInput}
+              name="price"
+              updateLocal={updateLocal}
+              required={true}
+            />
+          </Col>
+        </Row>
+        <Row>
+          <Col md="6">
             {+chooseCategory !== 3 && (
               <SelectInput
                 htmlFor="gear"
@@ -353,6 +395,11 @@ export default function AddCarParse2() {
             פרסם מודעה
           </Button>
         </div>
+        {serverError && (
+          <p role="alert" className="fade alert alert-danger show mt-2">
+            {serverError}
+          </p>
+        )}
       </Form>
     </Container>
   );

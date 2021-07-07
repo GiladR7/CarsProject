@@ -1,17 +1,26 @@
 import { Container } from "react-bootstrap";
 import { faCar } from "@fortawesome/free-solid-svg-icons";
-import { getMyAds } from "../DAL/api";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useEffect, useState } from "react";
+
 import CarItem from "../Components/CarItem";
+import { getMyAds } from "../DAL/api";
 
 export default function MyAds() {
   const [myAds, setMyAds] = useState([]);
-  useEffect(async () => {
-    const { userID } = JSON.parse(localStorage.getItem("currentUser"));
-    const myAds = await getMyAds(userID);
-    setMyAds([...myAds]);
+
+  useEffect(() => {
+    async function fetchMyAds() {
+      const { userID } = JSON.parse(localStorage.getItem("currentUser"));
+      const respone = await getMyAds(userID);
+      if (respone.status === "ok") {
+        setMyAds([...respone.data]);
+      }
+    }
+
+    fetchMyAds();
   }, []);
+
   return (
     <Container fluid="sm">
       <div className="my-ads mb-3">

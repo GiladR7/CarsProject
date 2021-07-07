@@ -1,49 +1,11 @@
 const serverHost = "http://localhost:5000";
-const users = [
-  {
-    userID: 1,
-    user: "GiladR",
-    email: "giladr777@gmail.com",
-    password: "123456Gad",
-    chooseCategory: [1, 3],
-  },
-  {
-    userID: 2,
-    user: "Yoni",
-    email: "yoni@gmail.com",
-    password: "12345Yad",
-    chooseCategory: [4],
-  },
-];
-
-let faivoriteAdsByUser = [
-  { userID: 2, adID: 1 },
-  { userID: 2, adID: 3 },
-  { userID: 1, adID: 2 },
-];
-
-const colors = [
-  { colorID: 1, colorName: "אדום" },
-  { colorID: 2, colorName: "אפור" },
-  { colorID: 3, colorName: "ורוד" },
-  { colorID: 4, colorName: "חום" },
-  { colorID: 5, colorName: "ירוק" },
-  { colorID: 6, colorName: "כחול" },
-  { colorID: 7, colorName: "כתום" },
-  { colorID: 8, colorName: "לבן" },
-  { colorID: 9, colorName: "סגול" },
-  { colorID: 10, colorName: "צהוב" },
-  { colorID: 11, colorName: "שחור" },
-];
 
 export async function getColorsOptions() {
   const data = await fetch(`${serverHost}/cars/colors`);
   const colors = await data.json();
   return colors;
 }
-async function getUsers() {
-  return users;
-}
+
 export async function getCities(serach, inputsValues, setInputsValues) {
   const cities = await fetchCities();
   const filterCities = cities.filter((city) => {
@@ -60,70 +22,20 @@ export async function getCities(serach, inputsValues, setInputsValues) {
   setInputsValues({ ...inputsValues });
 }
 export async function getAdEditData(adID) {
-  // owners: {
-  //   value: "",
-  //   isValid: true,
-  //   errors: [],
-  // },
-  // year: {
-  //   value: "",
-  //   isValid: true,
-  //   errors: [],
-  // },
-  // km: {
-  //   value: "",
-  //   isValid: true,
-  //   errors: [],
-  // },
-  // color: {
-  //   value: "",
-  //   isValid: true,
-  //   errors: [],
-  //   selectList: [],
-  // },
-  // gear: {
-  //   value: "",
-  //   isValid: true,
-  //   errors: [],
-  //   selectList: [],
-  // },
-  // codeArea: {
-  //   value: "",
-  //   isValid: true,
-  //   errors: [],
-  // },
-  // phone: {
-  //   value: "",
-  //   isValid: true,
-  //   errors: [],
-  // },
-  // file: {
-  //   value: "",
-  //   isValid: true,
-  //   errors: [],
-  // },
-  // city: {
-  //   value: "",
-  //   isValid: true,
-  //   errors: [],
-  //   cities: [],
-  // },
-  // description: {
-  //   value: "",
-  //   isValid: true,
-  //   errors: [],
-  // },
-  const data = await fetch(`${serverHost}/ads?adID=${adID}&editData=true`);
-  const [
-    {
-      codeAreaID: codeArea,
-      gearID: gear,
-      colorID: color,
-      carprice: price,
-      modelyear: year,
-      ...rest
-    },
-  ] = await data.json();
+  const respone = await fetch(`${serverHost}/ads?adID=${adID}&editData=true`);
+  const {
+    status,
+    data: [
+      {
+        codeAreaID: codeArea,
+        gearID: gear,
+        colorID: color,
+        carprice: price,
+        modelyear: year,
+        ...rest
+      },
+    ],
+  } = await respone.json();
   return {
     codeArea,
     gear,
@@ -133,81 +45,6 @@ export async function getAdEditData(adID) {
     ...rest,
   };
 }
-
-// export async function getAds() {
-//   return [
-//     {
-//       userID: 1,
-//       id: 1,
-//       manufacturer: "יונדאי",
-//       model: "טוסון",
-//       year: "2020-02-12",
-//       owners: 2,
-//       gear: "אוטומטי",
-//       km: "1,200",
-//       city: "נשר",
-//       color: "לבן",
-//       price: "120,000",
-//       phone: "050-2737204",
-//       images: [
-//         "https://www.galileasing.co.il/wp-content/uploads/2018/05/TUCSON.jpg",
-//         "http://www.carcost.co.il/Images/VehicleSubModelOptimizedImages/3062-7865.jpg",
-//         "https://www.kvishim.co.il/wp-content/uploads/images-007/Tucson-2016.jpg",
-//         "https://big-lease.co.il/wp-content/uploads/2019/10/Hyundai-Tucson-6.jpg",
-//       ],
-//       description: `רכב חדש אחריות עד 30/7/22 בניסאן מצלמה אחורית מולטימדיה חימום
-//       מושבים שלט חכם בגז' ענק .נסע רק לעבודה ובית שמורה 24,000 ק"מ
-//       נסיעות רחוקות נוסע 5.0 ל100 km שותה 1 ל 20 -18 בעיר 1 ל 13-15
-//       שווה כל שקל !!!!!!רק לרציניים בלבד`,
-//       postDate: "02.12.2018",
-//     },
-//     {
-//       userID: 2,
-//       id: 2,
-//       manufacturer: "סוזוקי",
-//       model: "גימיני",
-//       year: "2020-02-12",
-//       city: "נתניה",
-//       owners: 3,
-//       gear: "אוטומטי",
-//       km: "120,000",
-//       color: "שחור",
-//       price: "65,000",
-//       phone: "050-2737204",
-//       images: [
-//         "https://img.favcars.com/suzuki/jimny/suzuki_jimny_2007_wallpapers_1_b.jpg",
-//         "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS3mK3ZmCS9ulOhEMPj-U1RRrvndTIT83Xjm7ckZ_1a4ljdpXEdgsFFfXiAdXuWBPc2z5o&usqp=CAU",
-//         "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRbjgv3jdu457TTjJ9Q30YkSrNyWCHK558i8Ap6mbfmVQ_baRzslbnyqirIn6qQ7ndv-rA&usqp=CAU",
-//       ],
-//       description: `רכב חדש אחריות עד 30/7/22 בניסאן מצלמה אחורית מולטימדיה חימום
-//       מושבים שלט חכם בגז' ענק .נסע רק לעבודה ובית שמורה 24,000 ק"מ
-//       נסיעות רחוקות נוסע 5.0 ל100 km שותה 1 ל 20 -18 בעיר 1 ל 13-15
-//       שווה כל שקל !!!!!!רק לרציניים בלבד`,
-//       postDate: "09.06.2020",
-//     },
-//     {
-//       userID: 1,
-//       id: 3,
-//       manufacturer: "פיג'ו",
-//       model: "GMAX 250",
-//       year: "2012-02-12",
-//       city: "קרית שמונה",
-//       owners: 3,
-//       km: "12,000",
-//       color: "לבן",
-//       price: "12,000",
-//       phone: "050-3434231",
-//       images: [
-//         "http://1.bp.blogspot.com/-MUNRWFJiAwU/UxNoIlUgd7I/AAAAAAAAAJk/6WD_yYHiNys/s1600/IMG_0307.JPG",
-//       ],
-//       description: `רכב חדש אחריות עד 30/7/22 בניסאן מצלמה אחורית מולטימדיה חימום
-//       מושבים שלט חכם בגז' ענק .נסע רק לעבודה ובית שמורה 24,000 ק"מ
-//       נסיעות רחוקות נוסע 5.0 ל100 km שותה 1 ל 20 -18 בעיר 1 ל 13-15
-//       שווה כל שקל !!!!!!רק לרציניים בלבד`,
-//       postDate: "09.06.2020",
-//     },
-//   ];
-// }
 
 export async function getAds(orderBy, desc, categories) {
   let categoriesQuery = "";
@@ -271,33 +108,25 @@ function fetchCities() {
     );
 }
 
-export function logInCheck(email, password) {
-  return new Promise((resolve, reject) => {
-    getUsers().then((users) => {
-      const validaUser = users.find(
-        ({ email: emailDataB, password: passwordDataB }) => {
-          return email === emailDataB && password === passwordDataB;
-        }
-      );
-
-      if (validaUser) resolve(validaUser);
-      else reject("שם השמתמש או הסיסמא אינם נוכנים");
-    });
+export async function logInCheck(email, password) {
+  const respone = await fetch(`${serverHost}/users/logIn`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      email,
+      password,
+    }),
   });
+  const data = await respone.json();
+  if (data.status === "success") return Promise.resolve(data.data[0]);
+  return Promise.reject(data.message);
 }
 
-// export function getAdByID(adID) {
-//   return getAdEditData().then((ads) => {
-//     const adData = ads.find((ad) => {
-//       return +ad.id === +adID;
-//     });
-
-//     return Promise.resolve(adData);
-//   });
-// }
-
 export async function getAdByID(adID) {
-  const data = await fetch(`${serverHost}/ads?adID=${adID}`);
+  const respone = await fetch(`${serverHost}/ads?adID=${adID}`);
+  const { status, data } = await respone.json();
   const [
     {
       adid: id,
@@ -310,37 +139,61 @@ export async function getAdByID(adID) {
       carprice: price,
       ...rest
     },
-  ] = await data.json();
+  ] = data;
   const phone = `${codeArea}-${rest.phone}`;
   return {
-    id,
-    manufacturer,
-    gear,
-    model,
-    color,
-    year,
-    price,
-    ...rest,
-    phone,
+    data: {
+      id,
+      manufacturer,
+      gear,
+      model,
+      color,
+      year,
+      price,
+      ...rest,
+      phone,
+    },
+    status,
   };
 }
 
-function getAdsByID(adsIDs) {
-  return getAds().then((ads) => {
-    const adsData = ads.filter((ad) => {
-      return adsIDs.includes(ad.id);
-    });
-
-    return Promise.resolve(adsData);
+export async function sendNewUser(userData) {
+  const respone = await fetch(`${serverHost}/users`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      ...userData,
+    }),
   });
+
+  const data = await respone.json();
+  return data;
 }
 
-export function sendNewUser(userData) {
-  console.log(userData);
+export async function updateUserDeatils(userID, inputsValues) {
+  const respone = await fetch(`${serverHost}/users`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify([{ userID }, { ...inputsValues }]),
+  });
+
+  return respone.json();
 }
 
-export function sendNewAD(adData) {
-  console.log(adData);
+export async function sendNewAD(userID, part1, part2) {
+  const respone = await fetch(`${serverHost}/ads`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ userID, part1, part2 }),
+  });
+
+  return respone.json();
 }
 
 export async function getMyAds(userID) {
@@ -374,20 +227,40 @@ export async function getIDsOfFaivoritesAds(userID) {
   });
 }
 
-export async function updateFaivoriesAds(userID, adID) {
-  const containsAD = faivoriteAdsByUser.find((adsFaivories) => {
-    return adsFaivories.userID === userID && adsFaivories.adID === adID;
+export async function addNewFavoritesAd(adID, userID) {
+  const respone = await fetch(`${serverHost}/ads/favorites`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      adID,
+      userID,
+    }),
   });
-  if (containsAD) {
-    faivoriteAdsByUser = faivoriteAdsByUser.filter((adsFaivories) => {
-      return !(adsFaivories.userID === userID && adsFaivories.adID === adID);
-    });
-  } else {
-    faivoriteAdsByUser.push({ userID, adID });
-  }
+  const data = await respone.json();
 
-  return getIDsOfFaivoritesAds(userID).then((idsOfFaivoritesAds) => {
-    return idsOfFaivoritesAds;
+  return data.map(({ adID }) => {
+    return adID;
+  });
+}
+
+export async function removeAdFromFavorites(adID, userID) {
+  const respone = await fetch(`${serverHost}/ads/favorites`, {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      adID,
+      userID,
+    }),
+  });
+
+  const data = await respone.json();
+
+  return data.map(({ adID }) => {
+    return adID;
   });
 }
 

@@ -1,5 +1,7 @@
 import { Carousel } from "react-bootstrap";
 import carDefaultPhoto from "../images/buyCar2.jpg";
+import { carImageHost } from "../DAL/api";
+
 export default function CarouselCar({ images }) {
   if (images.length) {
     return (
@@ -9,7 +11,7 @@ export default function CarouselCar({ images }) {
             <Carousel.Item key={index}>
               <img
                 className="d-block w-100 img-carusel"
-                src={image}
+                src={`${carImageHost}${image}`}
                 alt="car-img"
               />
             </Carousel.Item>

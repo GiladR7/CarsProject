@@ -13,13 +13,17 @@ import {
   getAdEditData,
   getColorsOptions,
   getAreaCodes,
+  sendUpdateAdDate,
 } from "../DAL/api";
+import { createFormData } from "../utilities/utilities";
 
 import InputNumber from "../Components/InputNumber";
 
 export default function EditCarAd() {
+  const onlineUser = JSON.parse(localStorage.getItem("currentUser"));
   const [isDisable, setIsDisable] = useState(false);
   const [chooseCategory, setChooseCategory] = useState("");
+  const [error, setError] = useState("");
   const [inputsValues, setInputsValues] = useState({
     owners: {
       value: "",
@@ -70,7 +74,7 @@ export default function EditCarAd() {
       errors: [],
       cities: [],
     },
-    description: {
+    moreDetails: {
       value: "",
       isValid: true,
       errors: [],
@@ -85,8 +89,9 @@ export default function EditCarAd() {
   useEffect(() => {
     getAdEditData(id).then((ad) => {
       for (const key in inputsValues) {
-        if (key in ad) inputsValues[key].value = ad[key];
+        if (key in ad && ad[key]) inputsValues[key].value = ad[key];
       }
+
       setChooseCategory(ad.categoryID);
       setInputsValues({ ...inputsValues });
     });
@@ -117,11 +122,31 @@ export default function EditCarAd() {
     setInputsValues,
     setIsDisable
   );
-  function onsubmit(e) {
+  async function onsubmit(e) {
     e.preventDefault();
-    localStorage.removeItem("adCarData");
+    const { file, ...restData } = inputsValues;
+    const formData = createFormData(restData, file.value, "carImages");
+    formData.append("userID", onlineUser.userID);
+    formData.append("adID", id);
+    formData.append("chooseCategory", chooseCategory);
 
-    histoy.push("/");
+    const respone = await sendUpdateAdDate(formData);
+    const { inputsValue: serverInputValidtion, message, status } = respone;
+    setError("");
+
+    if (serverInputValidtion) {
+      for (const key in inputsValues) {
+        if (!((chooseCategory === 3 && key === "gear") || key === "file")) {
+          inputsValues[key].value = serverInputValidtion[key].value;
+          inputsValues[key].errors = serverInputValidtion[key].errors;
+          inputsValues[key].isValid = serverInputValidtion[key].isValid;
+        }
+      }
+    } else if (status === "ok") {
+      histoy.push("/");
+    } else {
+      setError(message);
+    }
   }
   return (
     <Container fluid>
@@ -135,8 +160,10 @@ export default function EditCarAd() {
               maxDate={new Date().toISOString().slice(0, 10)}
               minDate={"1960-01-01"}
               value={inputsValues.year.value}
-              changeInput={validationInput}
-              required={true}
+              changeInput={changeInput}
+              validation={validationInput}
+              errors={inputsValues.year.errors}
+              valid={inputsValues.year.isValid}
             />
           </Col>
           <Col md="6">
@@ -149,7 +176,9 @@ export default function EditCarAd() {
               value={inputsValues.km.value}
               changeInput={validationInput}
               name="km"
-              required={true}
+              value={inputsValues.km.value}
+              errors={inputsValues.km.errors}
+              valid={inputsValues.km.isValid}
             />
           </Col>
         </Row>
@@ -164,7 +193,9 @@ export default function EditCarAd() {
               value={inputsValues.owners.value}
               changeInput={validationInput}
               name="owners"
-              required={true}
+              errors={inputsValues.owners.errors}
+              valid={inputsValues.owners.isValid}
+              value={inputsValues.owners.value}
             />
           </Col>
           <Col md="6">
@@ -275,7 +306,9 @@ export default function EditCarAd() {
               value={inputsValues.price.value}
               changeInput={validationInput}
               name="price"
-              required={true}
+              value={inputsValues.price.value}
+              errors={inputsValues.price.errors}
+              valid={inputsValues.price.isValid}
             />
           </Col>
         </Row>
@@ -302,20 +335,24 @@ export default function EditCarAd() {
           htmlFor="more-details"
           placeholderText="הכנס פרטים נוספים על הרכב"
           labelText="פרטים נוספים"
-          name="description"
+          name="moreDetails"
           maxCharacters="255"
-          value={inputsValues.description.value}
+          value={inputsValues.moreDetails.value}
           inputOnChange={changeInput}
         />
         <div className="d-flex btn-parse2">
-          <button className="btn btn-warning" onClick={() => histoy.goBack()}>
-            חזרה למודעות
-          </button>
-
+          <a className="btn btn-warning" onClick={() => histoy.goBack()}>
+            חזרה לעמוד הקודם
+          </a>
           <Button variant="primary" type="submit" disabled={isDisable}>
             עדכן מודעה
           </Button>
         </div>
+        {error && (
+          <p role="alert" className="fade alert alert-danger show mt-2">
+            {error}
+          </p>
+        )}
       </Form>
     </Container>
   );

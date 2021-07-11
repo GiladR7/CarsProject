@@ -40,10 +40,10 @@ body::before {
   top: 10px;
   color: #ffc107;
   cursor: pointer;
-  font-size: 30px;
+  font-size: 27px;
   background-color: #625656;
   border-radius: 50%;
-  padding: 5px 6px 6px 7px;
+  padding: 4px 0px 4px 2px;
 }
 
 .love-post {
@@ -53,7 +53,14 @@ body::before {
   color: red;
   font-size: 30px;
 }
-
+.remove-item {
+  position: absolute;
+  left: 10px;
+  top: 10px;
+  color: red;
+  font-size: 23px;
+  padding: 1px;
+}
 header .form-check-label {
   padding-right: 4px;
 }

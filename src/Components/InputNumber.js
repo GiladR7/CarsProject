@@ -10,7 +10,6 @@ export default function InputNumber({
   maxNumber,
   placeholderText,
   updateLocal,
-  required,
   errors,
   valid,
 }) {
@@ -24,13 +23,12 @@ export default function InputNumber({
           placeholder={placeholderText}
           onChange={(e) => {
             const isDisable = changeInput(e.target);
-            updateLocal(isDisable);
+            updateLocal = updateLocal ? updateLocal(isDisable) : null;
           }}
           value={value}
           name={name}
           min={mixNumber}
           max={maxNumber}
-          required={required}
         />
         <Form.Control.Feedback
           role="alert"

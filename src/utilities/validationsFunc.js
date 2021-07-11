@@ -27,13 +27,11 @@ export function validationFunc(
       isValid = false;
       errors.push(validation[name].customError);
     }
-    if (name === "file") {
-      value = value.files;
-    }
 
     inputsValues[name].isValid = isValid;
     inputsValues[name].errors = errors;
     inputsValues[name].value = value;
+
     const isDisabled = canSubmit(
       inputsValues,
       setisDisabled,

@@ -48,16 +48,25 @@ export default function Registration() {
     setInputsValues
   );
 
+  function extractValues(inputs) {
+    const sendData = {};
+    for (const key in inputs) {
+      sendData[key] = inputs[key].value;
+    }
+    return sendData;
+  }
+
   async function onsubmit(e) {
     e.preventDefault();
+    const sendData = extractValues(inputsValues);
     const {
       message,
-      inputValues: inputServerValidtion,
+      inputsValue: inputServerValidtion,
       status,
-    } = await sendNewUser(inputsValues);
+    } = await sendNewUser(sendData);
+    setServerError("");
 
     if (inputServerValidtion) {
-      console.log(inputServerValidtion);
       setInputsValues({ ...inputServerValidtion });
     } else if (message) {
       setServerError(message);

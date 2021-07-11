@@ -11,3 +11,17 @@ export function checkBoxOnChange(inputsValues, setInputsValues) {
     setInputsValues({ ...inputsValues });
   };
 }
+
+export function createFormData(inputs, files, filesKey) {
+  const formData = new FormData();
+
+  for (const key in inputs) {
+    formData.append(key, inputs[key].value);
+  }
+  if (files) {
+    for (let i = 0; i < files.length; i++) {
+      formData.append(filesKey, files[i]);
+    }
+  }
+  return formData;
+}

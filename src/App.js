@@ -77,10 +77,7 @@ function App() {
             <AddCarParse2 />
           </Route>
           <Route path="/myFavorites">
-            <FavoritesAdsPage
-              countFavoritesAds={countFavoritesAds}
-              setCountFavoritesAds={setCountFavoritesAds}
-            />
+            <FavoritesAdsPage setCountFavoritesAds={setCountFavoritesAds} />
           </Route>
           <Route path="/myProfile">
             <MyProfile />

@@ -9,6 +9,7 @@ import PhoneInput from "../Components/PhoneInput";
 import DateInput from "../Components/DateInput";
 import { useEffect, useState } from "react";
 import { validationFunc, inputOnChange } from "../utilities/validationsFunc";
+import { createFormData } from "../utilities/utilities";
 import {
   getGears,
   getColorsOptions,
@@ -158,22 +159,33 @@ export default function AddCarParse2() {
 
   async function onsubmit(e) {
     e.preventDefault();
-    const { adDetails: Pashe2Data, carSelected: Pashe1Data } = JSON.parse(
-      localStorage.getItem("adCarData")
+    const { carSelected } = JSON.parse(localStorage.getItem("adCarData"));
+    const { file, ...carDetails } = inputsValues;
+    const carAdForm = createFormData(
+      { ...carDetails, ...carSelected },
+      file.value,
+      "carImages"
     );
-
-    const { message, newId, part2Validtion } = await sendNewAD(
-      onlineUser.userID,
-      Pashe1Data,
-      Pashe2Data
-    );
-
-    if (part2Validtion) {
-      setInputsValues({ ...part2Validtion });
+    carAdForm.append("userID", onlineUser.userID);
+    carAdForm.append("chooseCategory", chooseCategory);
+    const {
+      message,
+      adId,
+      inputsValue: part2ServerValidation,
+    } = await sendNewAD(carAdForm);
+    if (part2ServerValidation) {
+      for (const key in inputsValues) {
+        if (!((chooseCategory === 3 && key === "gear") || key === "file")) {
+          inputsValues[key].value = part2ServerValidation[key].value;
+          inputsValues[key].errors = part2ServerValidation[key].errors;
+          inputsValues[key].isValid = part2ServerValidation[key].isValid;
+        }
+      }
+      setInputsValues({ ...inputsValues });
       setServerError("");
     } else if (message) {
       setServerError(message);
-    } else if (newId) {
+    } else if (adId) {
       localStorage.removeItem("adCarData");
       histoy.push("/");
     }
@@ -214,7 +226,6 @@ export default function AddCarParse2() {
               changeInput={validationInput}
               name="km"
               updateLocal={updateLocal}
-              required={true}
             />
           </Col>
         </Row>
@@ -232,7 +243,6 @@ export default function AddCarParse2() {
               changeInput={validationInput}
               name="owners"
               updateLocal={updateLocal}
-              required={true}
             />
           </Col>
           <Col md="6">
@@ -290,7 +300,6 @@ export default function AddCarParse2() {
                 id="validationFormik107"
                 placeholder="בחר קובץ"
                 onChange={(e) => {
-                  console.log(e.target.files);
                   const isDisable = validationInput({
                     value: e.target.files,
                     name: "file",
@@ -353,7 +362,6 @@ export default function AddCarParse2() {
               changeInput={validationInput}
               name="price"
               updateLocal={updateLocal}
-              required={true}
             />
           </Col>
         </Row>

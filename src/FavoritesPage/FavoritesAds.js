@@ -6,13 +6,16 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { getMyFaivoritesAds } from "../DAL/api";
 import CarItem from "../Components/CarItem";
 
-export default function FavoritesAdsPage({
-  countFavoritesAds,
-  setCountFavoritesAds,
-}) {
+export default function FavoritesAdsPage({ setCountFavoritesAds }) {
   const [myFavoriesAds, setMyFavoriesAds] = useState([]);
   const [adsIDs, setAdsIDs] = useState([]);
 
+  function removeAdFromState(id) {
+    const updateFavorites = myFavoriesAds.filter(({ adid: currentAdId }) => {
+      return currentAdId !== id;
+    });
+    setMyFavoriesAds([...updateFavorites]);
+  }
   const getFavorites = async () => {
     const { userID } = JSON.parse(localStorage.getItem("currentUser"));
     const [adsIDs, adsData] = await getMyFaivoritesAds(userID);
@@ -22,7 +25,7 @@ export default function FavoritesAdsPage({
 
   useEffect(() => {
     getFavorites();
-  }, [countFavoritesAds]);
+  }, []);
 
   return (
     <Container fluid="sm">
@@ -42,8 +45,8 @@ export default function FavoritesAdsPage({
             <CarItem
               key={index}
               updateLikesNav={setCountFavoritesAds}
+              removeAdFromState={removeAdFromState}
               cardDetails={ad}
-              setMyFavoriesAds={setMyFavoriesAds}
               setLikeAdsIDs={setAdsIDs}
               likesIDs={adsIDs}
             />

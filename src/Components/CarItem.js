@@ -10,7 +10,13 @@ import * as icons from "@fortawesome/free-regular-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useHistory } from "react-router";
 import carDefaultPhoto from "../images/buyCar2.jpg";
-import { addNewFavoritesAd, removeAdFromFavorites } from "../DAL/api";
+import {
+  addNewFavoritesAd,
+  removeAdFromFavorites,
+  carImageHost,
+} from "../DAL/api";
+import RemoveAd from "./RemoveAdBtn";
+
 export default function CarItem({
   cardDetails: {
     adid: id,
@@ -30,6 +36,8 @@ export default function CarItem({
   likesIDs,
   setLikeAdsIDs,
   updateLikesNav = false,
+  removeAd,
+  removeAdFromState,
 }) {
   const history = useHistory();
   const onlineUser = JSON.parse(localStorage.getItem("currentUser"));
@@ -38,6 +46,9 @@ export default function CarItem({
     let likeAdIDs;
     if (likesIDs.includes(id)) {
       likeAdIDs = await removeAdFromFavorites(id, onlineUser.userID);
+      if (removeAdFromState) {
+        removeAdFromState(id);
+      }
     } else {
       likeAdIDs = await addNewFavoritesAd(id, onlineUser.userID);
     }
@@ -73,9 +84,13 @@ export default function CarItem({
               }}
             ></FontAwesomeIcon>
           )}
+          {onlineUser && userID === onlineUser.userID && (
+            <RemoveAd adId={id} removeAd={removeAd} />
+          )}
+
           <img
             className="card-img"
-            src={images[0] ? images[0] : carDefaultPhoto}
+            src={images[0] ? `${carImageHost}${images[0]}` : carDefaultPhoto}
             alt="car-img"
           />
         </div>

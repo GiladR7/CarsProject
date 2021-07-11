@@ -116,9 +116,13 @@ export default function CarDetails() {
           <Col md="6">
             <h2>פרטים נוספים</h2>
             <div className="about-car-container">
-              <p> {adData.description}</p>
+              {adData.description && <p> {adData.description}</p>}
+              {!adData.description && (
+                <h5 className="text-center mb-0">לא צויינו פרטים נוספים</h5>
+              )}
             </div>
           </Col>
+
           <Col md="6" className="text-left mt-3">
             <Button
               variant="primary"

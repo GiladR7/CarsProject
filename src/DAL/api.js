@@ -1,4 +1,9 @@
 const serverHost = "http://localhost:5000";
+export const carImageHost = "http://localhost:5000/carImages/";
+
+const commonHeaders = {
+  "Content-Type": "application/json",
+};
 
 export async function getColorsOptions() {
   const data = await fetch(`${serverHost}/cars/colors`);
@@ -111,9 +116,7 @@ function fetchCities() {
 export async function logInCheck(email, password) {
   const respone = await fetch(`${serverHost}/users/logIn`, {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
+    headers: { ...commonHeaders },
     body: JSON.stringify({
       email,
       password,
@@ -156,13 +159,22 @@ export async function getAdByID(adID) {
     status,
   };
 }
+export async function deleteAd(adID, userID) {
+  const respone = await fetch(`${serverHost}/ads`, {
+    method: "DELETE",
+    headers: { ...commonHeaders },
+    body: JSON.stringify({
+      adID,
+      userID,
+    }),
+  });
+  return respone.json;
+}
 
 export async function sendNewUser(userData) {
   const respone = await fetch(`${serverHost}/users`, {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
+    headers: { ...commonHeaders },
     body: JSON.stringify({
       ...userData,
     }),
@@ -175,24 +187,27 @@ export async function sendNewUser(userData) {
 export async function updateUserDeatils(userID, inputsValues) {
   const respone = await fetch(`${serverHost}/users`, {
     method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
-    },
+    headers: { ...commonHeaders },
     body: JSON.stringify([{ userID }, { ...inputsValues }]),
   });
 
   return respone.json();
 }
 
-export async function sendNewAD(userID, part1, part2) {
+export async function sendNewAD(adFormData) {
   const respone = await fetch(`${serverHost}/ads`, {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ userID, part1, part2 }),
+    body: adFormData,
   });
 
+  return respone.json();
+}
+
+export async function sendUpdateAdDate(adFormData) {
+  const respone = await fetch(`${serverHost}/ads`, {
+    method: "PUT",
+    body: adFormData,
+  });
   return respone.json();
 }
 
@@ -230,9 +245,7 @@ export async function getIDsOfFaivoritesAds(userID) {
 export async function addNewFavoritesAd(adID, userID) {
   const respone = await fetch(`${serverHost}/ads/favorites`, {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
+    headers: { ...commonHeaders },
     body: JSON.stringify({
       adID,
       userID,
@@ -248,9 +261,7 @@ export async function addNewFavoritesAd(adID, userID) {
 export async function removeAdFromFavorites(adID, userID) {
   const respone = await fetch(`${serverHost}/ads/favorites`, {
     method: "DELETE",
-    headers: {
-      "Content-Type": "application/json",
-    },
+    headers: { ...commonHeaders },
     body: JSON.stringify({
       adID,
       userID,

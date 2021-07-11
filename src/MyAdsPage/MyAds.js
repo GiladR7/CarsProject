@@ -8,7 +8,12 @@ import { getMyAds } from "../DAL/api";
 
 export default function MyAds() {
   const [myAds, setMyAds] = useState([]);
-
+  const removeAd = (adId) => {
+    const updateAds = myAds.filter(({ adid: currentAdID }) => {
+      return adId !== currentAdID;
+    });
+    setMyAds([...updateAds]);
+  };
   useEffect(() => {
     async function fetchMyAds() {
       const { userID } = JSON.parse(localStorage.getItem("currentUser"));
@@ -30,13 +35,13 @@ export default function MyAds() {
 
       {!myAds.length && (
         <div className="message-like-ads">
-          <h2>עדיין לא העלת אף מועדה</h2>
+          <h2>עדיין לא העלאת אף מודעה</h2>
         </div>
       )}
 
       <div className="d-flex flex-wrap  car-items-container">
         {myAds.map((ad, index) => {
-          return <CarItem key={index} cardDetails={ad} />;
+          return <CarItem key={index} cardDetails={ad} removeAd={removeAd} />;
         })}
       </div>
     </Container>

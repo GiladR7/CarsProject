@@ -19,7 +19,6 @@ import { getAds, getIDsOfFaivoritesAds } from "../DAL/api";
 import CarItem from "../Components/CarItem";
 import { checkBoxOnChange } from "../utilities/utilities";
 import { faHotjar } from "@fortawesome/free-brands-svg-icons";
-import { getByDisplayValue } from "@testing-library/react";
 
 export default function HomePage({ setCountFavoritesAds, isLogIn }) {
   const [ads, setAds] = useState([]);
@@ -45,6 +44,12 @@ export default function HomePage({ setCountFavoritesAds, isLogIn }) {
       categories.chooseCategory.value = chooseCategory;
     }
     return categories;
+  }
+  function removeAd(adId) {
+    const adsAfterRemove = ads.filter(({ adid: adIdFromState }) => {
+      return adIdFromState !== adId;
+    });
+    setAds([...adsAfterRemove]);
   }
   useEffect(() => {
     async function showAds() {
@@ -72,8 +77,7 @@ export default function HomePage({ setCountFavoritesAds, isLogIn }) {
       getLikeAdsIds();
     }
   }, [isLogIn]);
-  const [file, setFile] = useState();
-  const [image, setImage] = useState();
+
   async function getLikeAdsIds() {
     const adsIds = await getIDsOfFaivoritesAds(onlineUser.userID);
     setLikeAds([...adsIds]);
@@ -85,7 +89,7 @@ export default function HomePage({ setCountFavoritesAds, isLogIn }) {
   );
   return (
     <Container className="homep-page-container">
-      <header className="mx-auto" style={{ maxWidth: "1140px" }}>
+      <header className="mx-auto" style={{ maxWidth: "1195px" }}>
         <h1>מודעות שפורסמו</h1>
         <div className="row sory-container">
           <div className="col-sm-2">
@@ -165,41 +169,11 @@ export default function HomePage({ setCountFavoritesAds, isLogIn }) {
               likesIDs={likeAds}
               setLikeAdsIDs={setLikeAds}
               updateLikesNav={setCountFavoritesAds}
+              removeAd={removeAd}
             />
           );
         })}
       </div>
-
-      <form
-        enctype="multipart/form-data"
-        onSubmit={async (e) => {
-          e.preventDefault();
-          const data = new FormData();
-          for (let i = 0; i < file.length; i++) {
-            data.append("photos", file[i]);
-          }
-          data.append("name", "gilad");
-          const respone = await fetch("http://localhost:5000/upload", {
-            method: "POST",
-            body: data,
-          });
-          console.log(respone);
-          setImage(respone);
-        }}
-      >
-        <input
-          type="file"
-          name="avatar"
-          multiple
-          accept="image/png, image/jpeg"
-          onChange={(e) => {
-            console.log(e.target.files);
-            return setFile(e.target.files);
-          }}
-        />
-        <img src="http://localhost:5000/carImages/photos-1625671615753.jpg" />
-        <button> submit </button>
-      </form>
     </Container>
   );
 }

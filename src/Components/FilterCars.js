@@ -1,0 +1,165 @@
+import { ToggleButtonGroup, ToggleButton } from "react-bootstrap";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import CheckBoxGroup from "./CheckBoxGroup";
+import {
+  faSortAmountUpAlt,
+  faSortAmountDownAlt,
+  faMoneyBill,
+  faCalendarAlt,
+} from "@fortawesome/free-solid-svg-icons";
+import { useState } from "react";
+import { faHotjar } from "@fortawesome/free-brands-svg-icons";
+import { searchManufacturers, getModelsByManufacturers } from "../DAL/api";
+import SearchInput from "./SearchInput";
+import FilterDisplay from "./FilterDispaly";
+
+export default function FilterCars({
+  orderHeigher,
+  setOrderHeigher,
+  orderBy,
+  setOrdetBy,
+  checkBoxValues,
+  manufacturerFilter,
+  modelFilter,
+  setModelFilter,
+  setManufacturerFilter,
+  updateCheckBoxSelected,
+}) {
+  const [manufacturerSearch, setManufacturerSearch] = useState([]);
+  const [modelSearch, setModelSearch] = useState([]);
+  const [serachInputs, setSearchInputs] = useState({
+    model: "",
+    manufacturer: "",
+  });
+
+  function updateSeacrhValue({ name, value }) {
+    setSearchInputs({
+      ...serachInputs,
+      [name]: value,
+    });
+  }
+  const toggleObj = [
+    { value: "adDate", icon: faCalendarAlt, variant: "info", text: "תאריך" },
+    { value: "views", icon: faHotjar, variant: "danger", text: "פופולאריות" },
+    { value: "carprice", icon: faMoneyBill, variant: "success", text: "מחיר" },
+  ];
+
+  function serachModel(model) {
+    const models = JSON.parse(localStorage.getItem("models"));
+    const modelsIdsSelected = modelFilter.map(({ modelID }) => {
+      return modelID;
+    });
+    return models.filter(({ modelName, modelID }) => {
+      return (
+        modelName.toLowerCase().startsWith(model.toLowerCase()) &&
+        !modelsIdsSelected.includes(modelID)
+      );
+    });
+  }
+  return (
+    <>
+      <header
+        className="mx-auto"
+        style={{ maxWidth: "1195px", marginBottom: "20px" }}
+      >
+        <h1>מודעות שפורסמו</h1>
+        <div className="row sory-container">
+          <div className="col-sm-2">
+            <h5>
+              הצג מודעות לפי{" "}
+              <FontAwesomeIcon
+                style={{ fontSize: "22px", paddingRight: "4px" }}
+                icon={orderHeigher ? faSortAmountDownAlt : faSortAmountUpAlt}
+                onClick={() => setOrderHeigher(!orderHeigher)}
+              />
+            </h5>
+          </div>
+
+          <ToggleButtonGroup
+            className=" col-sm-6 row sort-btn-container mr-2"
+            type="radio"
+            name="sortBy"
+            value={orderBy}
+            onChange={(value) => setOrdetBy(value)}
+          >
+            {toggleObj.map((data) => {
+              return (
+                <ToggleButton
+                  value={data.value}
+                  key={data.value}
+                  variant={data.variant}
+                  className="sortByBtn"
+                >
+                  {data.text} <FontAwesomeIcon icon={data.icon} />
+                </ToggleButton>
+              );
+            })}
+          </ToggleButtonGroup>
+        </div>
+        <SearchInput
+          getResultsApi={searchManufacturers}
+          setResults={setManufacturerSearch}
+          searchResults={manufacturerSearch}
+          disabled={false}
+          name="manufacturer"
+          value={serachInputs.manufacturer}
+          placeholderText="סינון לפי יצרן"
+          filterList={manufacturerFilter}
+          setFilter={setManufacturerFilter}
+          dataID="manufacturerID"
+          valueData="manufacturerName"
+          inputOnChange={updateSeacrhValue}
+          getModelsByManufacturers={getModelsByManufacturers}
+        />
+
+        <SearchInput
+          disabled={!manufacturerFilter.length}
+          getResultsApi={serachModel}
+          setResults={setModelSearch}
+          searchResults={modelSearch}
+          name="model"
+          value={serachInputs.model}
+          placeholderText="סינון לפי דגם"
+          filterList={modelFilter}
+          setFilter={setModelFilter}
+          dataID="modelID"
+          valueData="modelName"
+          inputOnChange={updateSeacrhValue}
+        />
+
+        <CheckBoxGroup
+          labelText="הצג רכבים מסוג"
+          checkBoxValues={checkBoxValues.chooseCategory.value}
+          checkboxsValuesArr={[
+            ["רכבים פרטיים", 1],
+            ["אופנועים", 3],
+            ["ג'יפים", 4],
+          ]}
+          name="chooseCategory"
+          onChecked={updateCheckBoxSelected}
+        />
+      </header>
+
+      {!!manufacturerFilter.length && (
+        <FilterDisplay
+          title="סינון לפי יצרן"
+          filterItems={manufacturerFilter}
+          dataID="manufacturerID"
+          dataValue="manufacturerName"
+          setFilter={setManufacturerFilter}
+          modelsFilter={setModelFilter}
+        />
+      )}
+
+      {!!modelFilter.length && (
+        <FilterDisplay
+          title="סינון לפי דגם"
+          filterItems={modelFilter}
+          dataID="modelID"
+          dataValue="modelName"
+          setFilter={setModelFilter}
+        />
+      )}
+    </>
+  );
+}

@@ -11,7 +11,7 @@ import {
   faCarSide,
   faTruckPickup,
 } from "@fortawesome/free-solid-svg-icons";
-
+import { tokenValidtion } from "../utilities/validationsFunc";
 import {
   getItemLocal,
   updateLocalStorege,
@@ -28,6 +28,7 @@ const iconsCategories = {
 };
 export default function AddCarParse1() {
   const [btnDisable, setBtnDidable] = useState(true);
+
   const [inputValues, setInputValues] = useState(() => {
     return getItemLocal(
       "adCarData",
@@ -74,8 +75,16 @@ export default function AddCarParse1() {
     "carSelected",
     inputValues
   );
+
+  async function pageOnLoad() {
+    const isLogIn = await tokenValidtion(histoy);
+    if (isLogIn) {
+      const categoreis = await getCategories();
+      setSelectCategories([...categoreis]);
+    }
+  }
   useEffect(() => {
-    getCategories().then((categoreis) => setSelectCategories([...categoreis]));
+    pageOnLoad();
   }, []);
   function changeCatgory({ name, value }) {
     let btnPahseDisabled;

@@ -10,6 +10,7 @@ import * as icons from "@fortawesome/free-regular-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useHistory } from "react-router";
 import carDefaultPhoto from "../images/buyCar2.jpg";
+import { formatNumber } from "../utilities/utilities";
 import {
   addNewFavoritesAd,
   removeAdFromFavorites,
@@ -30,27 +31,27 @@ export default function CarItem({
     images,
     city,
     adDate: postDate,
-    userID,
     views,
+    userAd,
   },
-  likesIDs,
+  likesIDs = [],
   setLikeAdsIDs,
   updateLikesNav = false,
   removeAd,
   removeAdFromState,
+  showLike,
 }) {
   const history = useHistory();
-  const onlineUser = JSON.parse(localStorage.getItem("currentUser"));
 
   const updateLikeAds = async () => {
     let likeAdIDs;
     if (likesIDs.includes(id)) {
-      likeAdIDs = await removeAdFromFavorites(id, onlineUser.userID);
+      likeAdIDs = await removeAdFromFavorites(id);
       if (removeAdFromState) {
         removeAdFromState(id);
       }
     } else {
-      likeAdIDs = await addNewFavoritesAd(id, onlineUser.userID);
+      likeAdIDs = await addNewFavoritesAd(id);
     }
     updateLikesNav(likeAdIDs.length);
     setLikeAdsIDs([...likeAdIDs]);
@@ -62,14 +63,14 @@ export default function CarItem({
         style={{ maxWidth: "18rem", borderRadius: "20px", margin: "0 auto" }}
       >
         <div className="img-card-container">
-          {onlineUser && userID === onlineUser.userID && (
+          {userAd && (
             <FontAwesomeIcon
               className="edit-post"
               icon={faEdit}
               onClick={() => history.push(`${id}/editAd`)}
             ></FontAwesomeIcon>
           )}
-          {onlineUser && onlineUser.userID !== userID && (
+          {(userAd === false || showLike) && (
             <FontAwesomeIcon
               className="love-post fas"
               style={{
@@ -84,9 +85,7 @@ export default function CarItem({
               }}
             ></FontAwesomeIcon>
           )}
-          {onlineUser && userID === onlineUser.userID && (
-            <RemoveAd adId={id} removeAd={removeAd} />
-          )}
+          {userAd && <RemoveAd adId={id} removeAd={removeAd} />}
 
           <img
             className="card-img"
@@ -123,14 +122,14 @@ export default function CarItem({
             <Col>
               <p>
                 <FontAwesomeIcon icon={faCalendarAlt} />{" "}
-                {postDate.split("T")[0]}
+                {postDate.split("T")[0].split("-").reverse().join("-")}
               </p>
             </Col>
           </Row>
           <div className="price-row">
             <p>מחיר הרכב</p>
 
-            <p>&#8362;{price}</p>
+            <p>&#8362;{formatNumber(price)}</p>
           </div>
           <Row className="text-center card-details">
             <Col>
@@ -151,7 +150,7 @@ export default function CarItem({
             )}
             <Col>
               <p>ק"מ</p>
-              <p>{km}</p>
+              <p>{formatNumber(km)}</p>
             </Col>
           </Row>
 

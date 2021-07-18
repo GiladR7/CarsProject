@@ -1,12 +1,11 @@
-export function checkBoxOnChange(inputsValues, setInputsValues) {
+export function checkBoxOnChange(inputsValues, setInputsValues, name) {
   return ({ value, checked }) => {
     if (checked) {
-      inputsValues.chooseCategory.value.push(+value);
+      inputsValues[`${name ? name : "chooseCategory"}`].value.push(+value);
     } else {
-      inputsValues.chooseCategory.value =
-        inputsValues.chooseCategory.value.filter(
-          (category) => +category !== +value
-        );
+      inputsValues[`${name ? name : "chooseCategory"}`].value = inputsValues[
+        `${name ? name : "chooseCategory"}`
+      ].value.filter((category) => +category !== +value);
     }
     setInputsValues({ ...inputsValues });
   };
@@ -24,4 +23,25 @@ export function createFormData(inputs, files, filesKey) {
     }
   }
   return formData;
+}
+
+function reverseString(str) {
+  let output = "";
+  for (let i = str.length - 1; i >= 0; i--) {
+    output += str[i];
+  }
+  return output;
+}
+
+export function formatNumber(number) {
+  number = number.toString();
+  let output = "";
+  let num = reverseString(number);
+  for (let i = 0; i < num.length; i++) {
+    if (i !== 0 && i % 3 === 0) {
+      output += ",";
+    }
+    output += num[i];
+  }
+  return reverseString(output);
 }

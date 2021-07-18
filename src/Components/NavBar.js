@@ -8,6 +8,8 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { getIDsOfFaivoritesAds } from "../DAL/api";
 import { useEffect, useState } from "react";
+import { logOut } from "../DAL/api";
+import { useCookies } from "react-cookie";
 
 export default function MyNavbar({
   isLogIn,
@@ -18,7 +20,7 @@ export default function MyNavbar({
   setNumberOfFavories,
 }) {
   const history = useHistory();
-
+  const [cookies, setCookie] = useCookies(["token"]);
   const [activeLink, setActiveLike] = useState({
     register: {
       active: false,
@@ -39,10 +41,11 @@ export default function MyNavbar({
       active: false,
     },
   });
-  const onlineUser = JSON.parse(localStorage.getItem("currentUser"));
+  const { token } = cookies;
+
   async function getNumberOfLikes() {
-    if (onlineUser) {
-      const likes = await getIDsOfFaivoritesAds(onlineUser.userID);
+    if (token) {
+      const likes = await getIDsOfFaivoritesAds();
       setNumberOfFavories(likes.length);
     }
   }
@@ -68,6 +71,7 @@ export default function MyNavbar({
       activeLink[key].active = false;
     }
   }
+
   useEffect(() => {
     restActive();
     getNumberOfLikes();
@@ -80,7 +84,13 @@ export default function MyNavbar({
           <FontAwesomeIcon
             icon={faCarSide}
             className="car-main-icon"
-            style={{ marginLeft: "5px", color: "black" }}
+            style={{
+              marginLeft: "5px",
+              color: "black",
+              position: "relative",
+              top: "4px",
+              backgroundColor: "#a7b9cb",
+            }}
           />{" "}
           רכבי יד שנייה
         </Navbar.Brand>
@@ -181,6 +191,7 @@ export default function MyNavbar({
               <Nav.Link
                 onClick={() => {
                   history.push("/");
+                  logOut();
                   localStorage.clear();
                   setIsLogIn(false);
                 }}

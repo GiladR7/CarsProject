@@ -15,6 +15,7 @@ import {
   getColorsOptions,
   sendNewAD,
   getAreaCodes,
+  validToken,
 } from "../DAL/api";
 import {
   getItemLocal,
@@ -27,7 +28,6 @@ export default function AddCarParse2() {
   const [chooseCategory, setChooseCategory] = useState("");
   const [selectAreaCodes, setSelectAreaCodes] = useState([]);
   const [serverError, setServerError] = useState();
-  const onlineUser = JSON.parse(localStorage.getItem("currentUser"));
   const [inputsValues, setInputsValues] = useState(() => {
     return getItemLocal(
       "adCarData",
@@ -102,44 +102,51 @@ export default function AddCarParse2() {
     setIsDisable,
     chooseCategory
   );
-  useEffect(() => {
-    if (
-      !localStorage.getItem("adCarData") ||
-      JSON.parse(localStorage.getItem("adCarData")).isDisabled
-    ) {
-      histoy.push("add-new-car");
-    } else {
-      const {
-        carSelected: {
-          cartype: { value: category },
-        },
-      } = JSON.parse(localStorage.getItem("adCarData"));
 
-      setChooseCategory(category);
+  async function pageOnLoad() {
+    const isLogIn = await validToken(histoy);
+    if (isLogIn) {
+      if (
+        !localStorage.getItem("adCarData") ||
+        JSON.parse(localStorage.getItem("adCarData")).isDisabled
+      ) {
+        histoy.push("add-new-car");
+      } else {
+        const {
+          carSelected: {
+            cartype: { value: category },
+          },
+        } = JSON.parse(localStorage.getItem("adCarData"));
 
-      getGears().then((gear) => {
-        inputsValues.gear.selectList = gear;
-        setInputsValues({ ...inputsValues });
-      });
+        setChooseCategory(category);
 
-      getAreaCodes().then((codeArea) => setSelectAreaCodes([...codeArea]));
+        getGears().then((gear) => {
+          inputsValues.gear.selectList = gear;
+          setInputsValues({ ...inputsValues });
+        });
 
-      getColorsOptions().then((colors) => {
-        inputsValues.color.selectList = colors;
-        setInputsValues({ ...inputsValues });
-      });
-      //check if all input ok when move between the pages of the addCar
-      const validationInput = validationFunc(
-        inputsValues,
-        setInputsValues,
-        setIsDisable,
-        category
-      );
-      validationInput({
-        name: "moreDetails",
-        value: inputsValues.moreDetails.value,
-      });
+        getAreaCodes().then((codeArea) => setSelectAreaCodes([...codeArea]));
+
+        getColorsOptions().then((colors) => {
+          inputsValues.color.selectList = colors;
+          setInputsValues({ ...inputsValues });
+        });
+        //check if all input ok when move between the pages of the addCar
+        const validationInput = validationFunc(
+          inputsValues,
+          setInputsValues,
+          setIsDisable,
+          category
+        );
+        validationInput({
+          name: "moreDetails",
+          value: inputsValues.moreDetails.value,
+        });
+      }
     }
+  }
+  useEffect(() => {
+    pageOnLoad();
   }, []);
 
   const updateLocal = updateLocalStorege(
@@ -166,7 +173,7 @@ export default function AddCarParse2() {
       file.value,
       "carImages"
     );
-    carAdForm.append("userID", onlineUser.userID);
+
     carAdForm.append("chooseCategory", chooseCategory);
     const {
       message,

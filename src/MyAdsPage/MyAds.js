@@ -3,10 +3,13 @@ import { faCar } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useEffect, useState } from "react";
 
+import { tokenValidtion } from "../utilities/validationsFunc";
 import CarItem from "../Components/CarItem";
 import { getMyAds } from "../DAL/api";
+import { useHistory } from "react-router";
 
 export default function MyAds() {
+  const history = useHistory();
   const [myAds, setMyAds] = useState([]);
   const removeAd = (adId) => {
     const updateAds = myAds.filter(({ adid: currentAdID }) => {
@@ -16,10 +19,12 @@ export default function MyAds() {
   };
   useEffect(() => {
     async function fetchMyAds() {
-      const { userID } = JSON.parse(localStorage.getItem("currentUser"));
-      const respone = await getMyAds(userID);
-      if (respone.status === "ok") {
-        setMyAds([...respone.data]);
+      const isLogIn = await tokenValidtion(history);
+      if (isLogIn) {
+        const respone = await getMyAds();
+        if (respone.status === "ok") {
+          setMyAds([...respone.data]);
+        }
       }
     }
 

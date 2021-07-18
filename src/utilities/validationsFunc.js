@@ -1,5 +1,5 @@
 import { validation } from "../utilities/validationObj";
-import { getCities } from "../DAL/api";
+import { getCities, validToken } from "../DAL/api";
 
 export function validationFunc(
   inputsValues,
@@ -100,3 +100,14 @@ export function checkInputChangeBeforeSubmit(inputsValues, userDataFromLocal) {
   }
   return false;
 }
+
+export async function tokenValidtion(history) {
+  const data = await validToken();
+  if (data.status !== "ok") {
+    history.push("/");
+    return false;
+  }
+  return true;
+}
+
+

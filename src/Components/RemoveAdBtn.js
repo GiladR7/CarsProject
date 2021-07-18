@@ -6,12 +6,12 @@ import { deleteAd } from "../DAL/api";
 
 export default function RemoveAd({ adId, removeAd }) {
   const [show, setShow] = useState(false);
-  const onlineUser = JSON.parse(localStorage.getItem("currentUser"));
+
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
   const deleteRequest = async () => {
     removeAd(adId);
-    await deleteAd(adId, onlineUser.userID);
+    await deleteAd(adId);
     setShow(false);
   };
 

@@ -5,11 +5,13 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import { getMyFaivoritesAds } from "../DAL/api";
 import CarItem from "../Components/CarItem";
+import { tokenValidtion } from "../utilities/validationsFunc";
+import { useHistory } from "react-router";
 
 export default function FavoritesAdsPage({ setCountFavoritesAds }) {
   const [myFavoriesAds, setMyFavoriesAds] = useState([]);
   const [adsIDs, setAdsIDs] = useState([]);
-
+  const history = useHistory();
   function removeAdFromState(id) {
     const updateFavorites = myFavoriesAds.filter(({ adid: currentAdId }) => {
       return currentAdId !== id;
@@ -17,10 +19,12 @@ export default function FavoritesAdsPage({ setCountFavoritesAds }) {
     setMyFavoriesAds([...updateFavorites]);
   }
   const getFavorites = async () => {
-    const { userID } = JSON.parse(localStorage.getItem("currentUser"));
-    const [adsIDs, adsData] = await getMyFaivoritesAds(userID);
-    setMyFavoriesAds([...adsData]);
-    setAdsIDs([...adsIDs]);
+    const isLogIn = await tokenValidtion(history);
+    if (isLogIn) {
+      const [adsIDs, adsData] = await getMyFaivoritesAds();
+      setMyFavoriesAds([...adsData]);
+      setAdsIDs([...adsIDs]);
+    }
   };
 
   useEffect(() => {
@@ -49,6 +53,7 @@ export default function FavoritesAdsPage({ setCountFavoritesAds }) {
               cardDetails={ad}
               setLikeAdsIDs={setAdsIDs}
               likesIDs={adsIDs}
+              showLike={true}
             />
           );
         })}

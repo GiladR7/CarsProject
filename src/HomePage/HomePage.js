@@ -1,24 +1,9 @@
 import { useEffect, useState } from "react";
-import {
-  Form,
-  Container,
-  ToggleButtonGroup,
-  ToggleButton,
-} from "react-bootstrap";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faSearch,
-  faSortAmountUpAlt,
-  faSortAmountDownAlt,
-  faMoneyBill,
-  faCalendarAlt,
-} from "@fortawesome/free-solid-svg-icons";
-
-import CheckBoxGroup from "../Components/CheckBoxGroup";
+import { Container } from "react-bootstrap";
 import { getAds, getIDsOfFaivoritesAds } from "../DAL/api";
 import CarItem from "../Components/CarItem";
 import { checkBoxOnChange } from "../utilities/utilities";
-import { faHotjar } from "@fortawesome/free-brands-svg-icons";
+import FilterCars from "../Components/FilterCars";
 
 export default function HomePage({ setCountFavoritesAds, isLogIn }) {
   const [ads, setAds] = useState([]);
@@ -26,6 +11,9 @@ export default function HomePage({ setCountFavoritesAds, isLogIn }) {
   const [orderHeigher, setOrderHeigher] = useState("true");
   const [orderBy, setOrdetBy] = useState("adDate");
   const [likeAds, setLikeAds] = useState([]);
+  const [manufacturerFilter, setManufacturerFilter] = useState([]);
+  const [modelFilter, setModelFilter] = useState([]);
+
   const [checkBoxValues, setCheckBoxValues] = useState(() => {
     return updateUserCategories();
   });
@@ -53,17 +41,35 @@ export default function HomePage({ setCountFavoritesAds, isLogIn }) {
   }
   useEffect(() => {
     async function showAds() {
+      const manufacturerIDs = manufacturerFilter.map(({ manufacturerID }) => {
+        return manufacturerID;
+      });
+      const modelIDs = modelFilter.map(({ modelID }) => {
+        return modelID;
+      });
       const respone = await getAds(
         orderBy,
         orderHeigher,
-        checkBoxValues.chooseCategory.value
+        checkBoxValues.chooseCategory.value,
+        manufacturerIDs,
+        modelIDs
       );
+
       if (respone.status === "ok") {
         setAds([...respone.data]);
+      } else {
+        setAds([]);
       }
     }
     showAds();
-  }, [orderBy, orderHeigher, checkBoxValues]);
+  }, [
+    orderBy,
+    orderHeigher,
+    checkBoxValues,
+    manufacturerFilter,
+    modelFilter,
+    isLogIn,
+  ]);
 
   useEffect(() => {
     if (onlineUser) {
@@ -79,7 +85,8 @@ export default function HomePage({ setCountFavoritesAds, isLogIn }) {
   }, [isLogIn]);
 
   async function getLikeAdsIds() {
-    const adsIds = await getIDsOfFaivoritesAds(onlineUser.userID);
+    const adsIds = await getIDsOfFaivoritesAds();
+
     setLikeAds([...adsIds]);
     setCountFavoritesAds(adsIds.length);
   }
@@ -87,78 +94,21 @@ export default function HomePage({ setCountFavoritesAds, isLogIn }) {
     checkBoxValues,
     setCheckBoxValues
   );
+
   return (
     <Container className="homep-page-container">
-      <header className="mx-auto" style={{ maxWidth: "1195px" }}>
-        <h1>מודעות שפורסמו</h1>
-        <div className="row sory-container">
-          <div className="col-sm-2">
-            <h5>
-              הצג מודעות לפי{" "}
-              <FontAwesomeIcon
-                style={{ fontSize: "22px", paddingRight: "4px" }}
-                icon={orderHeigher ? faSortAmountDownAlt : faSortAmountUpAlt}
-                onClick={() => setOrderHeigher(!orderHeigher)}
-              />
-            </h5>
-          </div>
-
-          <ToggleButtonGroup
-            className=" col-sm-6 row sort-btn-container mr-2"
-            type="radio"
-            name="sortBy"
-            value={orderBy}
-            onChange={(value) => setOrdetBy(value)}
-          >
-            <ToggleButton value="adDate" className="sortByBtn" variant="info">
-              תאריך <FontAwesomeIcon icon={faCalendarAlt} />
-            </ToggleButton>
-            <ToggleButton value="views" className="sortByBtn " variant="danger">
-              פופולאריות <FontAwesomeIcon icon={faHotjar} />
-            </ToggleButton>
-            <ToggleButton
-              value="carprice"
-              className="sortByBtn "
-              variant="success"
-            >
-              מחיר <FontAwesomeIcon icon={faMoneyBill} />
-            </ToggleButton>
-          </ToggleButtonGroup>
-        </div>
-        <div className="serach-container mx-auto">
-          <Form.Group>
-            <div className="input-home-container">
-              <FontAwesomeIcon icon={faSearch} className="filter-icon" />
-              <Form.Control
-                type="text"
-                placeholder="סינון לפי יצרן"
-                className="filter-input"
-              />
-            </div>
-            <br />
-            <div className="input-home-container">
-              <FontAwesomeIcon icon={faSearch} className="filter-icon" />
-              <Form.Control
-                type="text"
-                placeholder="סינון לפי דגם"
-                className="filter-input"
-              />
-            </div>
-          </Form.Group>
-        </div>
-
-        <CheckBoxGroup
-          labelText="הצג רכבים מסוג"
-          checkBoxValues={checkBoxValues.chooseCategory.value}
-          checkboxsValuesArr={[
-            ["רכבים פרטיים", 1],
-            ["אופנועים", 3],
-            ["ג'יפים", 4],
-          ]}
-          name="chooseCategory"
-          onChecked={updateCheckBoxSelected}
-        />
-      </header>
+      <FilterCars
+        orderHeigher={orderHeigher}
+        setOrderHeigher={setOrderHeigher}
+        orderBy={orderBy}
+        setOrdetBy={setOrdetBy}
+        checkBoxValues={checkBoxValues}
+        manufacturerFilter={manufacturerFilter}
+        modelFilter={modelFilter}
+        setModelFilter={setModelFilter}
+        setManufacturerFilter={setManufacturerFilter}
+        updateCheckBoxSelected={updateCheckBoxSelected}
+      />
 
       <div className="d-flex flex-wrap  car-items-container">
         {ads.map((ad, index) => {
@@ -174,6 +124,15 @@ export default function HomePage({ setCountFavoritesAds, isLogIn }) {
           );
         })}
       </div>
+
+      {!ads.length && (
+        <div
+          className="message-like-ads"
+          style={{ maxWidth: "1195px", margin: "0px auto" }}
+        >
+          <h2>לא נמצאו תוצאות</h2>
+        </div>
+      )}
     </Container>
   );
 }

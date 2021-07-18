@@ -1,13 +1,16 @@
 import { useEffect, useState } from "react";
 import { Container, Row, Col, Table, ListGroup, Button } from "react-bootstrap";
 import { useHistory, useParams } from "react-router";
-import { getAdByID } from "../DAL/api";
+import { getAdByID, andView } from "../DAL/api";
 import { faPhone, faMoneyBillWave } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { formatNumber } from "../utilities/utilities";
 import CarouselCar from "./Carousel";
+import { useCookies } from "react-cookie";
 
 export default function CarDetails() {
   const histoy = useHistory();
+  const [cookies, setCookies] = useCookies(["token"]);
   const { id: adID } = useParams();
   const [adData, setAdData] = useState({
     id: "",
@@ -23,8 +26,11 @@ export default function CarDetails() {
     images: [],
     description: "",
   });
-
+  const { token } = cookies;
   useEffect(() => {
+    if (token) {
+      andView(adID);
+    }
     async function fetchAdById() {
       const respone = await getAdByID(adID);
       if (respone.status === "ok") setAdData({ ...respone.data });
@@ -55,7 +61,7 @@ export default function CarDetails() {
                     fontSize: "17px",
                   }}
                 />{" "}
-                &#8362; {adData.price}
+                &#8362; {formatNumber(adData.price)}
               </ListGroup.Item>
               <ListGroup.Item
                 className="list-details-item"
@@ -101,7 +107,7 @@ export default function CarDetails() {
                   ) : null}
                   <tr>
                     <th>קילומטרים</th>
-                    <td>{adData.km}</td>
+                    <td>{formatNumber(adData.km)}</td>
                   </tr>
                   <tr>
                     <th>צבע</th>

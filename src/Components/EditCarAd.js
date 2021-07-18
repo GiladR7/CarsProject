@@ -14,13 +14,13 @@ import {
   getColorsOptions,
   getAreaCodes,
   sendUpdateAdDate,
+  canEditAd,
 } from "../DAL/api";
 import { createFormData } from "../utilities/utilities";
 
 import InputNumber from "../Components/InputNumber";
 
 export default function EditCarAd() {
-  const onlineUser = JSON.parse(localStorage.getItem("currentUser"));
   const [isDisable, setIsDisable] = useState(false);
   const [chooseCategory, setChooseCategory] = useState("");
   const [error, setError] = useState("");
@@ -85,31 +85,40 @@ export default function EditCarAd() {
       errors: [],
     },
   });
-  const { id } = useParams();
-  useEffect(() => {
-    getAdEditData(id).then((ad) => {
-      for (const key in inputsValues) {
-        if (key in ad && ad[key]) inputsValues[key].value = ad[key];
-      }
-
-      setChooseCategory(ad.categoryID);
-      setInputsValues({ ...inputsValues });
-    });
-    getAreaCodes().then((codeArea) => {
-      inputsValues.codeArea.selectList = codeArea;
-      setInputsValues({ ...inputsValues });
-    });
-    getGears().then((gear) => {
-      inputsValues.gear.selectList = gear;
-      setInputsValues({ ...inputsValues });
-    });
-    getColorsOptions().then((colors) => {
-      inputsValues.color.selectList = colors;
-      setInputsValues({ ...inputsValues });
-    });
-  }, []);
 
   const histoy = useHistory();
+  const { id } = useParams();
+  async function pageOnLoad() {
+    const respone = await canEditAd(id);
+    if (respone.status === "ok") {
+      getAdEditData(id).then((ad) => {
+        for (const key in inputsValues) {
+          if (key in ad && ad[key]) inputsValues[key].value = ad[key];
+        }
+
+        setChooseCategory(ad.categoryID);
+        setInputsValues({ ...inputsValues });
+      });
+      getAreaCodes().then((codeArea) => {
+        inputsValues.codeArea.selectList = codeArea;
+        setInputsValues({ ...inputsValues });
+      });
+      getGears().then((gear) => {
+        inputsValues.gear.selectList = gear;
+        setInputsValues({ ...inputsValues });
+      });
+      getColorsOptions().then((colors) => {
+        inputsValues.color.selectList = colors;
+        setInputsValues({ ...inputsValues });
+      });
+    } else {
+      histoy.push("/");
+    }
+  }
+
+  useEffect(() => {
+    pageOnLoad();
+  }, []);
 
   const validationInput = validationFunc(
     inputsValues,
@@ -126,7 +135,7 @@ export default function EditCarAd() {
     e.preventDefault();
     const { file, ...restData } = inputsValues;
     const formData = createFormData(restData, file.value, "carImages");
-    formData.append("userID", onlineUser.userID);
+
     formData.append("adID", id);
     formData.append("chooseCategory", chooseCategory);
 
@@ -176,7 +185,6 @@ export default function EditCarAd() {
               value={inputsValues.km.value}
               changeInput={validationInput}
               name="km"
-              value={inputsValues.km.value}
               errors={inputsValues.km.errors}
               valid={inputsValues.km.isValid}
             />
@@ -195,7 +203,6 @@ export default function EditCarAd() {
               name="owners"
               errors={inputsValues.owners.errors}
               valid={inputsValues.owners.isValid}
-              value={inputsValues.owners.value}
             />
           </Col>
           <Col md="6">
@@ -222,7 +229,7 @@ export default function EditCarAd() {
                       onClick={() => {
                         inputsValues.city.cities = [];
                         inputsValues.city.errors = [];
-                        const isDisabled = validationInput({
+                        validationInput({
                           name: "city",
                           value: city,
                         });
@@ -306,7 +313,6 @@ export default function EditCarAd() {
               value={inputsValues.price.value}
               changeInput={validationInput}
               name="price"
-              value={inputsValues.price.value}
               errors={inputsValues.price.errors}
               valid={inputsValues.price.isValid}
             />

@@ -22,13 +22,15 @@ import FavoritesAdsPage from "./FavoritesPage/FavoritesAds";
 import MyNavbar from "./Components/NavBar";
 import HomePage from "./HomePage/HomePage";
 import CarDetails from "../src/Components/CarDetails";
+import { useCookies } from "react-cookie";
 
 function App() {
   const [showLogIng, setShowLogIn] = useState(false);
   const [isLogIn, setIsLogIn] = useState(false);
-
+  const [cookies, setCookie] = useCookies(["token"]);
   useEffect(() => {
-    if (localStorage.getItem("currentUser")) {
+    const { token } = cookies;
+    if (token) {
       setIsLogIn(true);
     }
   }, []);

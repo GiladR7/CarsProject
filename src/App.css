@@ -126,11 +126,39 @@ label.btn.sortByBtn.active.btn-info {
 .input-home-container {
   position: relative;
 }
+.filter-header {
+  background-color: #025265;
+  color: white;
+  border-radius: 20px;
+  padding-right: 13px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
 .filter-icon {
   position: absolute;
   top: 11px;
   right: 10px;
   color: black;
+}
+.filterItem {
+  border-radius: 0px;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+.filterItem {
+  margin-left: 10px;
+  margin-bottom: 10px;
+}
+.searchContainer {
+  position: absolute;
+  width: 100%;
+  z-index: 10;
+}
+.searchInput {
+  color: black;
+  padding-top: 4px;
+  padding-bottom: 4px;
 }
 
 header {

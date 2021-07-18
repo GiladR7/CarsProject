@@ -1,12 +1,31 @@
 const serverHost = "http://localhost:5000";
 export const carImageHost = "http://localhost:5000/carImages/";
 
-const commonHeaders = {
-  "Content-Type": "application/json",
-};
+function initFetch(serverHost) {
+  return async (
+    urlRequest,
+    method = "GET",
+    data,
+    contentType = "application/json"
+  ) => {
+    const fetchObj = {
+      method,
+      headers: {
+        "Access-Control-Allow-Origin": serverHost,
+      },
+      credentials: "include",
+    };
+    if (method !== "GET") fetchObj.body = data;
+    if (contentType) fetchObj.headers["Content-type"] = contentType;
+
+    return fetch(`${serverHost}${urlRequest}`, fetchObj);
+  };
+}
+
+const setFetch = initFetch(serverHost);
 
 export async function getColorsOptions() {
-  const data = await fetch(`${serverHost}/cars/colors`);
+  const data = await setFetch(`/cars/colors`);
   const colors = await data.json();
   return colors;
 }
@@ -27,7 +46,7 @@ export async function getCities(serach, inputsValues, setInputsValues) {
   setInputsValues({ ...inputsValues });
 }
 export async function getAdEditData(adID) {
-  const respone = await fetch(`${serverHost}/ads?adID=${adID}&editData=true`);
+  const respone = await setFetch(`/ads?adID=${adID}&editData=true`);
   const {
     status,
     data: [
@@ -50,51 +69,107 @@ export async function getAdEditData(adID) {
     ...rest,
   };
 }
+export async function andView(adID) {
+  const respone = await setFetch(
+    `/ads/views`,
+    "POST",
+    JSON.stringify({
+      adID,
+    })
+  );
+}
+export async function getAds(orderBy, desc, categories, manufacturers, models) {
+  const categoriesQuery = createQueryList(categories, "categoryID");
+  const manufacturersQuery = createQueryList(manufacturers, "manufacturerID");
+  const modelsQuery = createQueryList(models, "modelID");
 
-export async function getAds(orderBy, desc, categories) {
-  let categoriesQuery = "";
-  categories.forEach((category, index, arr) => {
-    if ((index === 0 && arr.length === 1) || index + 1 === arr.length) {
-      categoriesQuery += `categoryID[]=${category}`;
-    } else {
-      categoriesQuery += `categoryID[]=${category}&`;
-    }
-  });
-  const data = await fetch(
-    `${serverHost}/ads?orderBy=${orderBy}&desc=${desc}${
+  const data = await setFetch(
+    `/ads?orderBy=${orderBy}&desc=${desc}${
       categoriesQuery ? `&${categoriesQuery}` : ""
+    }${manufacturersQuery ? `&${manufacturersQuery}` : ""}${
+      modelsQuery ? `&${modelsQuery}` : ""
     }`
   );
+
   const ads = await data.json();
   return ads;
 }
 
 export async function getCategories() {
-  const data = await fetch(`${serverHost}/cars`);
+  const data = await setFetch(`/cars`);
   const categories = await data.json();
   return categories;
 }
 
+function createQueryList(arrData, queryName) {
+  let queryString = "";
+  arrData.forEach((data, index, arr) => {
+    if ((index === 0 && arr.length === 1) || index + 1 === arr.length) {
+      queryString += `${queryName}[]=${data}`;
+    } else {
+      queryString += `${queryName}[]=${data}&`;
+    }
+  });
+  return queryString;
+}
+
+export async function getModelsByManufacturers(manufacturers) {
+  const manufacturersIds = manufacturers.map(({ manufacturerID }) => {
+    return manufacturerID;
+  });
+  const categoriesQuery = createQueryList(manufacturersIds, "manufacturerID");
+
+  const data = await setFetch(`/cars/models?${categoriesQuery}`);
+  const models = await data.json();
+  localStorage.setItem("models", JSON.stringify(models));
+}
+
 export async function getManufacturer(categoryID) {
-  const data = await fetch(
-    `${serverHost}/cars/manufacturers?categoryID=${categoryID}`
-  );
+  const data = await setFetch(`/cars/manufacturers?categoryID=${categoryID}`);
   const manufacturers = await data.json();
+
   return manufacturers;
 }
 
 export async function getModels(categoryID, manufacturerID) {
-  const data = await fetch(
-    `${serverHost}/cars/models?categoryID=${categoryID}&manufacturerID=${manufacturerID}`
+  const data = await setFetch(
+    `/cars/models?categoryID=${categoryID}&manufacturerID[]=${manufacturerID}`
   );
   const models = await data.json();
   return models;
 }
 
 export async function getGears() {
-  const data = await fetch(`${serverHost}/cars/gears`);
+  const data = await setFetch(`/cars/gears`);
   const gears = await data.json();
   return gears;
+}
+
+async function getAllManufacturers() {
+  const data = await setFetch(`/cars/manufacturers`);
+  const manufacturers = await data.json();
+
+  return manufacturers;
+}
+
+export async function searchManufacturers(searchText, selectList) {
+  let manufacturers;
+  if (localStorage.getItem("manufacturers")) {
+    manufacturers = JSON.parse(localStorage.getItem("manufacturers"));
+  } else {
+    manufacturers = await getAllManufacturers();
+    localStorage.setItem("manufacturers", JSON.stringify(manufacturers));
+  }
+
+  const idsSelected = selectList.map(({ manufacturerID }) => {
+    return manufacturerID;
+  });
+  return manufacturers.filter(({ manufacturerName, manufacturerID }) => {
+    return (
+      manufacturerName.toLowerCase().startsWith(searchText.toLowerCase()) &&
+      !idsSelected.includes(manufacturerID)
+    );
+  });
 }
 
 function fetchCities() {
@@ -114,21 +189,21 @@ function fetchCities() {
 }
 
 export async function logInCheck(email, password) {
-  const respone = await fetch(`${serverHost}/users/logIn`, {
-    method: "POST",
-    headers: { ...commonHeaders },
-    body: JSON.stringify({
+  const respone = await setFetch(
+    `/users/logIn`,
+    "POST",
+    JSON.stringify({
       email,
       password,
-    }),
-  });
+    })
+  );
   const data = await respone.json();
   if (data.status === "success") return Promise.resolve(data.data[0]);
   return Promise.reject(data.message);
 }
 
 export async function getAdByID(adID) {
-  const respone = await fetch(`${serverHost}/ads?adID=${adID}`);
+  const respone = await setFetch(`/ads?adID=${adID}`);
   const { status, data } = await respone.json();
   const [
     {
@@ -159,61 +234,55 @@ export async function getAdByID(adID) {
     status,
   };
 }
-export async function deleteAd(adID, userID) {
-  const respone = await fetch(`${serverHost}/ads`, {
-    method: "DELETE",
-    headers: { ...commonHeaders },
-    body: JSON.stringify({
+export async function deleteAd(adID) {
+  const respone = await setFetch(
+    `/ads`,
+    "DELETE",
+    JSON.stringify({
       adID,
-      userID,
-    }),
-  });
+    })
+  );
   return respone.json;
 }
 
 export async function sendNewUser(userData) {
-  const respone = await fetch(`${serverHost}/users`, {
-    method: "POST",
-    headers: { ...commonHeaders },
-    body: JSON.stringify({
+  const respone = await setFetch(
+    `/users`,
+    "POST",
+    JSON.stringify({
       ...userData,
-    }),
-  });
+    })
+  );
 
   const data = await respone.json();
   return data;
 }
 
-export async function updateUserDeatils(userID, inputsValues) {
-  const respone = await fetch(`${serverHost}/users`, {
-    method: "PUT",
-    headers: { ...commonHeaders },
-    body: JSON.stringify([{ userID }, { ...inputsValues }]),
-  });
+export async function updateUserDeatils(inputsValues) {
+  const respone = await setFetch(
+    `/users`,
+    "PUT",
+
+    JSON.stringify({ ...inputsValues })
+  );
 
   return respone.json();
 }
 
 export async function sendNewAD(adFormData) {
-  const respone = await fetch(`${serverHost}/ads`, {
-    method: "POST",
-    body: adFormData,
-  });
+  const respone = await setFetch(`/ads`, "POST", adFormData, "");
 
   return respone.json();
 }
 
 export async function sendUpdateAdDate(adFormData) {
-  const respone = await fetch(`${serverHost}/ads`, {
-    method: "PUT",
-    body: adFormData,
-  });
+  const respone = await setFetch(`/ads`, "PUT", adFormData, "");
   return respone.json();
 }
 
-export async function getMyAds(userID) {
+export async function getMyAds() {
   try {
-    const data = await fetch(`${serverHost}/ads?userID=${userID}`);
+    const data = await setFetch(`/ads/myAds`);
     const myAds = await data.json();
     return myAds;
   } catch (err) {
@@ -221,9 +290,12 @@ export async function getMyAds(userID) {
   }
 }
 
-export async function getMyFaivoritesAds(userID) {
-  const data = await fetch(`${serverHost}/ads/favorites?userID=${userID}`);
-  const [adIDs, adData] = await data.json();
+export async function getMyFaivoritesAds() {
+  const respone = await setFetch(`/ads/favorites`);
+
+  const data = await respone.json();
+
+  const [adIDs, adData] = data.ads;
 
   return [
     adIDs.map(({ adID }) => {
@@ -233,24 +305,45 @@ export async function getMyFaivoritesAds(userID) {
   ];
 }
 
-export async function getIDsOfFaivoritesAds(userID) {
-  const data = await fetch(`${serverHost}/ads/favorites?userID=${userID}`);
-  const likeAdsIDs = await data.json();
-
-  return likeAdsIDs[0].map(({ adID }) => {
-    return adID;
-  });
+export async function getUserDetails() {
+  const respone = await setFetch("/users");
+  const userData = await respone.json();
+  return userData;
 }
 
-export async function addNewFavoritesAd(adID, userID) {
-  const respone = await fetch(`${serverHost}/ads/favorites`, {
-    method: "POST",
-    headers: { ...commonHeaders },
-    body: JSON.stringify({
+export async function canEditAd(adID) {
+  const respone = await setFetch(`/ads/can-edit?adID=${adID}`);
+  const data = await respone.json();
+  return data;
+}
+
+export async function getIDsOfFaivoritesAds() {
+  const respone = await setFetch(`/ads/favorites`);
+
+  const data = await respone.json();
+
+  if (data.status === "ok")
+    return data.ads[0].map(({ adID }) => {
+      return adID;
+    });
+  return [];
+}
+export async function logOut() {
+  await setFetch("/users/logOut");
+}
+export async function validToken() {
+  const respone = await setFetch("/users/token");
+  return respone.json();
+}
+
+export async function addNewFavoritesAd(adID) {
+  const respone = await setFetch(
+    `/ads/favorites`,
+    "POST",
+    JSON.stringify({
       adID,
-      userID,
-    }),
-  });
+    })
+  );
   const data = await respone.json();
 
   return data.map(({ adID }) => {
@@ -258,15 +351,14 @@ export async function addNewFavoritesAd(adID, userID) {
   });
 }
 
-export async function removeAdFromFavorites(adID, userID) {
-  const respone = await fetch(`${serverHost}/ads/favorites`, {
-    method: "DELETE",
-    headers: { ...commonHeaders },
-    body: JSON.stringify({
+export async function removeAdFromFavorites(adID) {
+  const respone = await setFetch(
+    `/ads/favorites`,
+    "DELETE",
+    JSON.stringify({
       adID,
-      userID,
-    }),
-  });
+    })
+  );
 
   const data = await respone.json();
 
@@ -277,7 +369,7 @@ export async function removeAdFromFavorites(adID, userID) {
 
 export async function getAreaCodes() {
   try {
-    const data = await fetch(`${serverHost}/cars/codeArea`);
+    const data = await setFetch(`/cars/codeArea`);
     const phoneAreaCodes = await data.json();
     return phoneAreaCodes;
   } catch (err) {

@@ -32,7 +32,7 @@ export default function Registration() {
       isValid: true,
       errors: [],
     },
-    chooseCategory: {
+    chooseCategories: {
       value: [],
       isValid: true,
       errors: [],
@@ -45,7 +45,8 @@ export default function Registration() {
   );
   const updateCheckBoxSelected = checkBoxOnChange(
     inputsValues,
-    setInputsValues
+    setInputsValues,
+    "chooseCategories"
   );
 
   function extractValues(inputs) {
@@ -67,6 +68,7 @@ export default function Registration() {
     setServerError("");
 
     if (inputServerValidtion) {
+      console.log({ ...inputServerValidtion });
       setInputsValues({ ...inputServerValidtion });
     } else if (message) {
       setServerError(message);
@@ -132,13 +134,13 @@ export default function Registration() {
 
         <CheckBoxGroup
           labelText="הצג לי מודעות"
-          checkBoxValues={inputsValues.chooseCategory.value}
+          checkBoxValues={inputsValues.chooseCategories.value}
           checkboxsValuesArr={[
             ["רכבים פרטיים", 1],
             ["אופנועים", 3],
             ["ג'יפים", 4],
           ]}
-          name="chooseCategory"
+          name="chooseCategories"
           onChecked={updateCheckBoxSelected}
         />
 

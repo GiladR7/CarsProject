@@ -1,11 +1,12 @@
 import { Container, Form, Button } from "react-bootstrap";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useHistory } from "react-router";
 
 import InputTextInLine from "../Components/InputTextInLine";
 import { updateUserDeatils } from "../DAL/api";
 import {
   validationFunc,
+  tokenValidtion,
   inputOnChange,
   checkInputChangeBeforeSubmit,
 } from "../utilities/validationsFunc";
@@ -49,6 +50,15 @@ export default function MyProfile() {
     return userDetails;
   }
 
+  async function pageOnLoad() {
+    const isLogIn = await tokenValidtion(history);
+    if (isLogIn) {
+      setInputDataFromLocal();
+    }
+  }
+  useEffect(() => {
+    pageOnLoad();
+  }, []);
   const [isDisabled, setisDisabled] = useState(false);
   const [inputsValues, setInputsValues] = useState(() => {
     return setInputDataFromLocal();
@@ -72,7 +82,7 @@ export default function MyProfile() {
         data,
         message,
         inputsValues: inputsSeverValidation,
-      } = await updateUserDeatils(userDataFromLocal.userID, inputsValues);
+      } = await updateUserDeatils(inputsValues);
 
       if (inputsSeverValidation) {
         setInputsValues({ ...inputsSeverValidation });

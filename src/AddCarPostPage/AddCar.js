@@ -106,6 +106,7 @@ export default function AddCarParse1() {
         inputValues.model.selectList = selectModel;
         inputValues.model.isDisabled = value ? false : true;
         inputValues.model.value = "";
+
         setInputValues({ ...inputValues });
         updateLocal(btnPahseDisabled);
       });

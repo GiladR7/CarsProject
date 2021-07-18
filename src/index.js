@@ -4,10 +4,13 @@ import "./index.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import { CookiesProvider } from "react-cookie";
+import { HomePageAdsProvider } from "./Context/HomePageContext";
 ReactDOM.render(
   <React.StrictMode>
     <CookiesProvider>
-      <App />
+      <HomePageAdsProvider>
+        <App />
+      </HomePageAdsProvider>
     </CookiesProvider>
   </React.StrictMode>,
   document.getElementById("root")

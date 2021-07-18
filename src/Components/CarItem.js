@@ -92,6 +92,11 @@ export default function CarItem({
             src={images[0] ? `${carImageHost}${images[0]}` : carDefaultPhoto}
             alt="car-img"
           />
+          {!images[0] && (
+            <p style={{ position: "absolute", bottom: "0px", right: "10px" }}>
+              לא קיימת תמונה
+            </p>
+          )}
         </div>
 
         <Card.Body className="text-center">

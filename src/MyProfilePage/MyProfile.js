@@ -83,7 +83,7 @@ export default function MyProfile() {
         message,
         inputsValues: inputsSeverValidation,
       } = await updateUserDeatils(inputsValues);
-
+      console.log(inputsValues);
       if (inputsSeverValidation) {
         setInputsValues({ ...inputsSeverValidation });
       } else if (message) {

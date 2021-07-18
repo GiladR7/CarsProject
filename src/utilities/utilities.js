@@ -45,3 +45,17 @@ export function formatNumber(number) {
   }
   return reverseString(output);
 }
+
+export function updateUserCategories() {
+  const categories = {
+    chooseCategory: {
+      value: [],
+    },
+  };
+  if (localStorage.getItem("currentUser")) {
+    const { chooseCategory } = JSON.parse(localStorage.getItem("currentUser"));
+
+    categories.chooseCategory.value = chooseCategory;
+  }
+  return categories;
+}

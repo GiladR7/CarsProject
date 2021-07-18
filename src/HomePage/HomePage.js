@@ -1,38 +1,25 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Container } from "react-bootstrap";
 import { getAds, getIDsOfFaivoritesAds } from "../DAL/api";
 import CarItem from "../Components/CarItem";
 import { checkBoxOnChange } from "../utilities/utilities";
 import FilterCars from "../Components/FilterCars";
+import { AdsContext } from "../Context/HomePageContext";
+import { updateUserCategories } from "../utilities/utilities";
 
 export default function HomePage({ setCountFavoritesAds, isLogIn }) {
   const [ads, setAds] = useState([]);
-  const onlineUser = JSON.parse(localStorage.getItem("currentUser"));
-  const [orderHeigher, setOrderHeigher] = useState("true");
-  const [orderBy, setOrdetBy] = useState("adDate");
+  const {
+    orderHeigher,
+    orderBy,
+    modelFilter,
+    manufacturerFilter,
+    checkBoxValues,
+    setCheckBoxValues,
+  } = useContext(AdsContext);
+
   const [likeAds, setLikeAds] = useState([]);
-  const [manufacturerFilter, setManufacturerFilter] = useState([]);
-  const [modelFilter, setModelFilter] = useState([]);
 
-  const [checkBoxValues, setCheckBoxValues] = useState(() => {
-    return updateUserCategories();
-  });
-
-  function updateUserCategories() {
-    const categories = {
-      chooseCategory: {
-        value: [],
-      },
-    };
-    if (localStorage.getItem("currentUser")) {
-      const { chooseCategory } = JSON.parse(
-        localStorage.getItem("currentUser")
-      );
-
-      categories.chooseCategory.value = chooseCategory;
-    }
-    return categories;
-  }
   function removeAd(adId) {
     const adsAfterRemove = ads.filter(({ adid: adIdFromState }) => {
       return adIdFromState !== adId;
@@ -72,7 +59,7 @@ export default function HomePage({ setCountFavoritesAds, isLogIn }) {
   ]);
 
   useEffect(() => {
-    if (onlineUser) {
+    if (isLogIn) {
       const {
         chooseCategory: { value },
       } = updateUserCategories();
@@ -98,15 +85,7 @@ export default function HomePage({ setCountFavoritesAds, isLogIn }) {
   return (
     <Container className="homep-page-container">
       <FilterCars
-        orderHeigher={orderHeigher}
-        setOrderHeigher={setOrderHeigher}
-        orderBy={orderBy}
-        setOrdetBy={setOrdetBy}
         checkBoxValues={checkBoxValues}
-        manufacturerFilter={manufacturerFilter}
-        modelFilter={modelFilter}
-        setModelFilter={setModelFilter}
-        setManufacturerFilter={setManufacturerFilter}
         updateCheckBoxSelected={updateCheckBoxSelected}
       />
 

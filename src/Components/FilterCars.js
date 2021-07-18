@@ -7,30 +7,30 @@ import {
   faMoneyBill,
   faCalendarAlt,
 } from "@fortawesome/free-solid-svg-icons";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { faHotjar } from "@fortawesome/free-brands-svg-icons";
 import { searchManufacturers, getModelsByManufacturers } from "../DAL/api";
 import SearchInput from "./SearchInput";
 import FilterDisplay from "./FilterDispaly";
+import { AdsContext } from "../Context/HomePageContext";
 
-export default function FilterCars({
-  orderHeigher,
-  setOrderHeigher,
-  orderBy,
-  setOrdetBy,
-  checkBoxValues,
-  manufacturerFilter,
-  modelFilter,
-  setModelFilter,
-  setManufacturerFilter,
-  updateCheckBoxSelected,
-}) {
+export default function FilterCars({ checkBoxValues, updateCheckBoxSelected }) {
   const [manufacturerSearch, setManufacturerSearch] = useState([]);
   const [modelSearch, setModelSearch] = useState([]);
   const [serachInputs, setSearchInputs] = useState({
     model: "",
     manufacturer: "",
   });
+  const {
+    orderBy,
+    setOrdetBy,
+    orderHeigher,
+    setOrderHeigher,
+    manufacturerFilter,
+    setManufacturerFilter,
+    modelFilter,
+    setModelFilter,
+  } = useContext(AdsContext);
 
   function updateSeacrhValue({ name, value }) {
     setSearchInputs({

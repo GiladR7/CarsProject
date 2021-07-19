@@ -1,10 +1,10 @@
 export function checkBoxOnChange(inputsValues, setInputsValues, name) {
   return ({ value, checked }) => {
     if (checked) {
-      inputsValues[`${name ? name : "chooseCategory"}`].value.push(+value);
+      inputsValues[`${name ? name : "chooseCategories"}`].value.push(+value);
     } else {
-      inputsValues[`${name ? name : "chooseCategory"}`].value = inputsValues[
-        `${name ? name : "chooseCategory"}`
+      inputsValues[`${name ? name : "chooseCategories"}`].value = inputsValues[
+        `${name ? name : "chooseCategories"}`
       ].value.filter((category) => +category !== +value);
     }
     setInputsValues({ ...inputsValues });
@@ -48,14 +48,24 @@ export function formatNumber(number) {
 
 export function updateUserCategories() {
   const categories = {
-    chooseCategory: {
+    chooseCategories: {
       value: [],
     },
   };
   if (localStorage.getItem("currentUser")) {
-    const { chooseCategory } = JSON.parse(localStorage.getItem("currentUser"));
+    const { chooseCategories } = JSON.parse(
+      localStorage.getItem("currentUser")
+    );
 
-    categories.chooseCategory.value = chooseCategory;
+    categories.chooseCategories.value = chooseCategories;
   }
   return categories;
+}
+
+export function extractValues(inputs) {
+  const sendData = {};
+  for (const key in inputs) {
+    sendData[key] = inputs[key].value;
+  }
+  return sendData;
 }

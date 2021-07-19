@@ -87,7 +87,7 @@ export function checkInputChangeBeforeSubmit(inputsValues, userDataFromLocal) {
   for (const key in inputsValues) {
     if (userDataFromLocal[key] !== inputsValues[key].value) {
       if (
-        key === "chooseCategory" &&
+        key === "chooseCategories" &&
         !checkChooseCategoryChange(
           userDataFromLocal[key],
           inputsValues[key].value
@@ -109,5 +109,3 @@ export async function tokenValidtion(history) {
   }
   return true;
 }
-
-

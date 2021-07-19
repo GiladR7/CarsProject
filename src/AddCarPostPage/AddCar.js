@@ -20,7 +20,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useHistory } from "react-router";
 import { getCategories, getModels, getManufacturer } from "../DAL/api";
 import { useEffect, useState } from "react";
-
+import Aos from "aos";
+import "aos/dist/aos.css";
 const iconsCategories = {
   "ג'יפ": faTruckPickup,
   "רכב פרטי": faCarSide,
@@ -28,7 +29,9 @@ const iconsCategories = {
 };
 export default function AddCarParse1() {
   const [btnDisable, setBtnDidable] = useState(true);
-
+  useEffect(() => {
+    Aos.init({ duration: 1500 });
+  }, []);
   const [inputValues, setInputValues] = useState(() => {
     return getItemLocal(
       "adCarData",
@@ -123,7 +126,7 @@ export default function AddCarParse1() {
   }
 
   return (
-    <Container fluid>
+    <Container fluid data-aos="fade-down">
       <Form className="add-car-container">
         <Form.Group className="select-type">
           <Form.Label style={{ display: "block", textAlign: "center" }}>

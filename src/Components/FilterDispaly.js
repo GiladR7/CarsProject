@@ -10,7 +10,7 @@ export default function FilterDisplay({
   modelsFilter,
 }) {
   return (
-    <div>
+    <div data-aos="fade-down">
       <h4
         style={{ maxWidth: "1195px", margin: "0px auto 20px auto" }}
         className="filter-header"

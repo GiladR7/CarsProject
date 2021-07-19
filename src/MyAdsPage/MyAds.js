@@ -7,6 +7,8 @@ import { tokenValidtion } from "../utilities/validationsFunc";
 import CarItem from "../Components/CarItem";
 import { getMyAds } from "../DAL/api";
 import { useHistory } from "react-router";
+import Aos from "aos";
+import "aos/dist/aos.css";
 
 export default function MyAds() {
   const history = useHistory();
@@ -17,6 +19,9 @@ export default function MyAds() {
     });
     setMyAds([...updateAds]);
   };
+  useEffect(() => {
+    Aos.init({ duration: 1500 });
+  }, []);
   useEffect(() => {
     async function fetchMyAds() {
       const isLogIn = await tokenValidtion(history);
@@ -32,7 +37,7 @@ export default function MyAds() {
   }, []);
 
   return (
-    <Container fluid="sm">
+    <Container fluid="sm" data-aos="fade-down">
       <div className="my-ads mb-3">
         <h1>המודעות שלי</h1>
         <FontAwesomeIcon icon={faCar} className="icon-myAds" />

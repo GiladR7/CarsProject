@@ -57,7 +57,11 @@ export default function CarItem({
     setLikeAdsIDs([...likeAdIDs]);
   };
   return (
-    <div style={{ width: "19rem" }} className="card-car-container">
+    <div
+      style={{ width: "19rem" }}
+      className="card-car-container"
+      data-aos="zoom-in"
+    >
       <Card
         className="car-card"
         style={{ maxWidth: "18rem", borderRadius: "20px", margin: "0 auto" }}
@@ -102,7 +106,10 @@ export default function CarItem({
         <Card.Body className="text-center">
           <Row>
             <Col className="col-8">
-              <Card.Title className="text-right pr-2">
+              <Card.Title
+                className="text-right pr-2"
+                style={{ fontSize: "18px" }}
+              >
                 {manufacturer} {model}
               </Card.Title>
             </Col>

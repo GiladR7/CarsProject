@@ -23,6 +23,7 @@ import MyNavbar from "./Components/NavBar";
 import HomePage from "./HomePage/HomePage";
 import CarDetails from "../src/Components/CarDetails";
 import { useCookies } from "react-cookie";
+import { useTransition, animated } from "react-spring";
 
 function App() {
   const [showLogIng, setShowLogIn] = useState(false);
@@ -38,6 +39,12 @@ function App() {
   function closePopUp() {
     setShowLogIn(false);
   }
+
+  const transition = useTransition(showLogIng, {
+    from: { opacity: 0, y: -200 },
+    enter: { opacity: 1, y: 30 },
+    leave: { opacity: 0, y: -200 },
+  });
   const [countFavoritesAds, setCountFavoritesAds] = useState(0);
 
   const NavBar = withRouter(MyNavbar);
@@ -52,8 +59,14 @@ function App() {
           setNumberOfFavories={setCountFavoritesAds}
         />
         <Container>
-          {showLogIng && (
-            <LogIn closePopUp={closePopUp} setIsLogIn={setIsLogIn} />
+          {transition((style, item) =>
+            item ? (
+              <animated.div style={style} className="log-in-pop">
+                <LogIn closePopUp={closePopUp} setIsLogIn={setIsLogIn} />
+              </animated.div>
+            ) : (
+              ""
+            )
           )}
         </Container>
         <Switch>

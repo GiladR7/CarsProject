@@ -6,7 +6,8 @@ import { checkBoxOnChange } from "../utilities/utilities";
 import FilterCars from "../Components/FilterCars";
 import { AdsContext } from "../Context/HomePageContext";
 import { updateUserCategories } from "../utilities/utilities";
-
+import Aos from "aos";
+import "aos/dist/aos.css";
 export default function HomePage({ setCountFavoritesAds, isLogIn }) {
   const [ads, setAds] = useState([]);
   const {
@@ -17,6 +18,10 @@ export default function HomePage({ setCountFavoritesAds, isLogIn }) {
     checkBoxValues,
     setCheckBoxValues,
   } = useContext(AdsContext);
+
+  useEffect(() => {
+    Aos.init({ duration: 1500 });
+  }, []);
 
   const [likeAds, setLikeAds] = useState([]);
 
@@ -37,7 +42,7 @@ export default function HomePage({ setCountFavoritesAds, isLogIn }) {
       const respone = await getAds(
         orderBy,
         orderHeigher,
-        checkBoxValues.chooseCategory.value,
+        checkBoxValues.chooseCategories.value,
         manufacturerIDs,
         modelIDs
       );
@@ -61,9 +66,9 @@ export default function HomePage({ setCountFavoritesAds, isLogIn }) {
   useEffect(() => {
     if (isLogIn) {
       const {
-        chooseCategory: { value },
+        chooseCategories: { value },
       } = updateUserCategories();
-      checkBoxValues.chooseCategory.value = value;
+      checkBoxValues.chooseCategories.value = value;
       setCheckBoxValues((checkBoxValues) => {
         return { ...checkBoxValues };
       });

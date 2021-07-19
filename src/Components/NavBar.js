@@ -42,7 +42,7 @@ export default function MyNavbar({
     },
   });
   const { token } = cookies;
-
+  const localData = JSON.parse(localStorage.getItem("currentUser"));
   async function getNumberOfLikes() {
     if (token) {
       const likes = await getIDsOfFaivoritesAds();
@@ -81,18 +81,19 @@ export default function MyNavbar({
     <div style={{ backgroundColor: "#a7b9cb" }} className="main-nav">
       <Navbar className="nav-bar-main" collapseOnSelect expand="lg">
         <Navbar.Brand className="ml-3">
+          {localData && <span>שלום , {localData.user}</span>}
           <FontAwesomeIcon
             icon={faCarSide}
             className="car-main-icon"
             style={{
               marginLeft: "5px",
+              marginRight: "5px",
               color: "black",
               position: "relative",
               top: "4px",
               backgroundColor: "#a7b9cb",
             }}
           />{" "}
-          רכבי יד שנייה
         </Navbar.Brand>
         <Navbar.Toggle aria-controls="responsive-navbar-nav" />
         <Navbar.Collapse id="responsive-navbar-nav">

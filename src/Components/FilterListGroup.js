@@ -14,7 +14,12 @@ export default function FilterListGroup({
   setModelList,
 }) {
   return (
-    <ListGroup.Item className="filterItem" key={id} value={id}>
+    <ListGroup.Item
+      className="filterItem"
+      key={id}
+      value={id}
+      data-aos="fade-dwon"
+    >
       <FontAwesomeIcon
         onClick={() => {
           const removeManufacturer = filterList.filter(

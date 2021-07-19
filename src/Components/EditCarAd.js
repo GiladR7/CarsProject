@@ -1,5 +1,6 @@
 import { Container, Form, Button, Col, Row, ListGroup } from "react-bootstrap";
-
+import Aos from "aos";
+import "aos/dist/aos.css";
 import { useHistory, useParams } from "react-router-dom";
 import TextArea from "../Components/TextArea";
 import InputText from "../Components/InputText";
@@ -85,7 +86,9 @@ export default function EditCarAd() {
       errors: [],
     },
   });
-
+  useEffect(() => {
+    Aos.init({ duration: 1500 });
+  }, []);
   const histoy = useHistory();
   const { id } = useParams();
   async function pageOnLoad() {
@@ -152,13 +155,13 @@ export default function EditCarAd() {
         }
       }
     } else if (status === "ok") {
-      histoy.push("/");
+      histoy.push(`/${id}/car-details`);
     } else {
       setError(message);
     }
   }
   return (
-    <Container fluid>
+    <Container fluid data-aos="fade-down">
       <Form className="add-car-container" onSubmit={(e) => onsubmit(e)}>
         <Row>
           <Col md="6">
@@ -167,7 +170,7 @@ export default function EditCarAd() {
               htmlFor="car-year"
               name="year"
               maxDate={new Date().toISOString().slice(0, 10)}
-              minDate={"1960-01-01"}
+              minDate={"1950-01-01"}
               value={inputsValues.year.value}
               changeInput={changeInput}
               validation={validationInput}

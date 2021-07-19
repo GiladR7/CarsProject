@@ -2,11 +2,18 @@ import { useEffect, useState } from "react";
 import { Container, Row, Col, Table, ListGroup, Button } from "react-bootstrap";
 import { useHistory, useParams } from "react-router";
 import { getAdByID, andView } from "../DAL/api";
-import { faPhone, faMoneyBillWave } from "@fortawesome/free-solid-svg-icons";
+import {
+  faPhone,
+  faMoneyBillWave,
+  faCalendarAlt,
+  faMapMarkerAlt,
+} from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { formatNumber } from "../utilities/utilities";
 import CarouselCar from "./Carousel";
 import { useCookies } from "react-cookie";
+import Aos from "aos";
+import "aos/dist/aos.css";
 
 export default function CarDetails() {
   const histoy = useHistory();
@@ -24,15 +31,21 @@ export default function CarDetails() {
     price: "",
     phone: "",
     images: [],
+    adDate: "",
+    city: "",
     description: "",
   });
   const { token } = cookies;
+  useEffect(() => {
+    Aos.init({ duration: 1500 });
+  }, []);
   useEffect(() => {
     if (token) {
       andView(adID);
     }
     async function fetchAdById() {
       const respone = await getAdByID(adID);
+
       if (respone.status === "ok") setAdData({ ...respone.data });
     }
     fetchAdById();
@@ -41,9 +54,36 @@ export default function CarDetails() {
     <Container fluid className="mt-5 mb-3">
       <div className="carDetials-container">
         <Row>
-          <Col md="6">
+          <Col md="6" data-aos="fade-left">
             <div className="img-car-page">
+              {!adData.images.length && (
+                <p className="car-image-message">לא קיימת תמונה</p>
+              )}
+
               <CarouselCar images={adData.images} />
+              <div className="carousel-data">
+                <p className="data-item">
+                  <FontAwesomeIcon
+                    icon={faMapMarkerAlt}
+                    style={{
+                      color: "red",
+                      paddingLeft: "2px",
+                      fontSize: "17px",
+                    }}
+                  />{" "}
+                  {adData.city}
+                </p>
+                <p className="data-item">
+                  <FontAwesomeIcon
+                    icon={faCalendarAlt}
+                    style={{
+                      paddingLeft: "2px",
+                      fontSize: "17px",
+                    }}
+                  />{" "}
+                  {adData.adDate.split("T")[0].split("-").reverse().join("-")}
+                </p>
+              </div>
             </div>
             <ListGroup
               horizontal
@@ -79,7 +119,7 @@ export default function CarDetails() {
               </ListGroup.Item>
             </ListGroup>
           </Col>
-          <Col md="6">
+          <Col md="6" data-aos="fade-down">
             <div className="car-table-container">
               <Table borderless>
                 <thead>
@@ -118,7 +158,7 @@ export default function CarDetails() {
             </div>
           </Col>
         </Row>
-        <Row className="more-details-row">
+        <Row className="more-details-row" data-aos="fade-up">
           <Col md="6">
             <h2>פרטים נוספים</h2>
             <div className="about-car-container">
@@ -133,7 +173,7 @@ export default function CarDetails() {
             <Button
               variant="primary"
               onClick={() => {
-                histoy.goBack();
+                histoy.push("/");
               }}
             >
               חזרה לעמוד הקודם

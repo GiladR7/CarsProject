@@ -13,15 +13,18 @@ export function getItemLocal(
       localStorage.getItem(itemName)
     );
     setIsDisable(canMovePage);
+
     return inputData;
   } else {
     const adData = localStorage.getItem(itemName)
       ? JSON.parse(localStorage.getItem(itemName))
       : {};
+    if (objName !== "adDetails") {
+      adData[objName] = { ...inputsValues };
+      adData[disableBtn] = true;
+      localStorage.setItem(itemName, JSON.stringify(adData));
+    }
 
-    adData[objName] = { ...inputsValues };
-    adData[disableBtn] = true;
-    localStorage.setItem(itemName, JSON.stringify(adData));
     return inputsValues;
   }
 }

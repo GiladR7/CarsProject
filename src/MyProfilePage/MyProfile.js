@@ -10,8 +10,10 @@ import {
   inputOnChange,
   checkInputChangeBeforeSubmit,
 } from "../utilities/validationsFunc";
-import { checkBoxOnChange } from "../utilities/utilities";
+import { checkBoxOnChange, extractValues } from "../utilities/utilities";
 import CheckBoxGroup from "../Components/CheckBoxGroup";
+import Aos from "aos";
+import "aos/dist/aos.css";
 
 export default function MyProfile() {
   const userDetails = {
@@ -26,13 +28,15 @@ export default function MyProfile() {
       errors: [],
     },
 
-    chooseCategory: {
+    chooseCategories: {
       value: [],
       isValid: true,
       errors: [],
     },
   };
-
+  useEffect(() => {
+    Aos.init({ duration: 1500 });
+  }, []);
   const [error, setError] = useState();
   const [updateSuccess, setUpdateSuccess] = useState("");
   const userDataFromLocal = JSON.parse(localStorage.getItem("currentUser"));
@@ -76,14 +80,15 @@ export default function MyProfile() {
   async function onsubmit(e) {
     e.preventDefault();
     setUpdateSuccess("");
+    const sendData = extractValues(inputsValues);
 
     if (checkInputChangeBeforeSubmit(inputsValues, userDataFromLocal)) {
       const {
         data,
         message,
         inputsValues: inputsSeverValidation,
-      } = await updateUserDeatils(inputsValues);
-      console.log(inputsValues);
+      } = await updateUserDeatils(sendData);
+
       if (inputsSeverValidation) {
         setInputsValues({ ...inputsSeverValidation });
       } else if (message) {
@@ -101,7 +106,7 @@ export default function MyProfile() {
 
   const changeInput = inputOnChange(inputsValues, setInputsValues);
   return (
-    <Container fluid>
+    <Container fluid data-aos="fade-down">
       <Form className="form-register" onSubmit={(e) => onsubmit(e)}>
         <h3 className="mb-4">הפרופיל שלי</h3>
         <InputTextInLine
@@ -131,7 +136,7 @@ export default function MyProfile() {
 
         <CheckBoxGroup
           labelText="הצג לי מודעות"
-          checkBoxValues={inputsValues.chooseCategory.value}
+          checkBoxValues={inputsValues.chooseCategories.value}
           checkboxsValuesArr={[
             ["רכבים פרטיים", 1],
             ["אופנועים", 3],

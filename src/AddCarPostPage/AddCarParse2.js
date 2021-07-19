@@ -22,7 +22,8 @@ import {
   updateLocalStorege,
 } from "../utilities/localStoregeFunc";
 import InputNumber from "../Components/InputNumber";
-
+import Aos from "aos";
+import "aos/dist/aos.css";
 export default function AddCarParse2() {
   const [isDisable, setIsDisable] = useState(true);
   const [chooseCategory, setChooseCategory] = useState("");
@@ -145,8 +146,10 @@ export default function AddCarParse2() {
       }
     }
   }
+
   useEffect(() => {
     pageOnLoad();
+    Aos.init({ duration: 1500 });
   }, []);
 
   const updateLocal = updateLocalStorege(
@@ -194,11 +197,11 @@ export default function AddCarParse2() {
       setServerError(message);
     } else if (adId) {
       localStorage.removeItem("adCarData");
-      histoy.push("/");
+      histoy.push(`/${adId}/car-details`);
     }
   }
   return (
-    <Container fluid>
+    <Container fluid data-aos="fade-down">
       <Form
         className="add-car-container"
         enctype="multipart/form-data"
@@ -211,7 +214,7 @@ export default function AddCarParse2() {
               htmlFor="car-year"
               name="year"
               maxDate={new Date().toISOString().slice(0, 10)}
-              minDate={"1960-01-01"}
+              minDate={"1950-01-01"}
               value={inputsValues.year.value}
               changeInput={changeInput}
               validation={validationInput}

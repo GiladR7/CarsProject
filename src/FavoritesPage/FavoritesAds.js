@@ -7,7 +7,8 @@ import { getMyFaivoritesAds } from "../DAL/api";
 import CarItem from "../Components/CarItem";
 import { tokenValidtion } from "../utilities/validationsFunc";
 import { useHistory } from "react-router";
-
+import Aos from "aos";
+import "aos/dist/aos.css";
 export default function FavoritesAdsPage({ setCountFavoritesAds }) {
   const [myFavoriesAds, setMyFavoriesAds] = useState([]);
   const [adsIDs, setAdsIDs] = useState([]);
@@ -31,8 +32,12 @@ export default function FavoritesAdsPage({ setCountFavoritesAds }) {
     getFavorites();
   }, []);
 
+  useEffect(() => {
+    Aos.init({ duration: 1500 });
+  }, []);
+
   return (
-    <Container fluid="sm">
+    <Container fluid="sm" data-aos="fade-down">
       <div className="header-like-ads mb-3">
         <h1>מודעות שאהבתי</h1>
         <FontAwesomeIcon icon={faHeart} />

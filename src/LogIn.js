@@ -5,6 +5,7 @@ import { logInCheck } from "./DAL/api";
 import { useState } from "react";
 import { validationFunc } from "./utilities/validationsFunc";
 import { useHistory } from "react-router";
+
 export default function LogIn({ closePopUp, setIsLogIn }) {
   const [isDisabled, setIsDisabled] = useState(true);
   const [errorLogIn, setErrorLogIn] = useState("");
@@ -34,7 +35,7 @@ export default function LogIn({ closePopUp, setIsLogIn }) {
       });
   }
   return (
-    <div className="log-in-pop">
+    <div>
       <FontAwesomeIcon
         icon={faTimes}
         className="close-btn"

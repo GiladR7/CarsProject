@@ -210,11 +210,41 @@ header::before {
 .img-car-page {
   height: 335px;
   border-radius: 20px;
+  position: relative;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 }
 .carousel-item {
   width: 100%;
   height: 335px;
   border-radius: 20px;
+}
+.item {
+  position: relative;
+  z-index: 10000;
+}
+.data-item {
+  background-color: white;
+  border: 1px solid black;
+  border-radius: 20px;
+  padding: 0px 10px;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+.carousel-data {
+  display: flex;
+  position: absolute;
+  justify-content: space-between;
+  top: 8px;
+  padding: 0px 15px;
+  z-index: 3;
+  width: 100%;
+}
+
+.car-image-message {
+  position: absolute;
+  bottom: -4px;
+  z-index: 10000;
+  padding-right: 30px;
 }
 
 .img-carusel {
@@ -336,7 +366,7 @@ header::before {
   max-width: 530px;
   min-height: 100px;
   position: fixed;
-  z-index: 2;
+  z-index: 1000;
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
   padding: 10px 20px;
   top: 175px;
@@ -451,11 +481,17 @@ header::before {
 }
 
 @media (max-width: 430px) {
+  .homep-page-container h1 {
+    font-size: 30px;
+  }
   .list-details-item {
     font-size: 12px;
   }
   .more-details-row {
     font-size: 14px;
+  }
+  .sortByBtn {
+    font-size: 11px;
   }
   .more-details-row h2 {
     font-size: 20px;
@@ -465,6 +501,9 @@ header::before {
   }
   .car-table-container {
     font-size: 14px;
+  }
+  .about-car-container h5 {
+    font-size: 16px;
   }
 }
 
@@ -480,6 +519,9 @@ header::before {
   }
   .car-table-container {
     font-size: 10px;
+  }
+  .about-car-container h5 {
+    font-size: 12px;
   }
 }
 

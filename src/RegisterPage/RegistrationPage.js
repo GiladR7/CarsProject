@@ -1,12 +1,13 @@
 import { Container, Form, Button } from "react-bootstrap";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useHistory } from "react-router";
-
+import Aos from "aos";
+import "aos/dist/aos.css";
 import { sendNewUser } from "../DAL/api";
 import { validationFunc, inputOnChange } from "../utilities/validationsFunc";
 import InputTextInLine from "../Components/InputTextInLine";
 import CheckBoxGroup from "../Components/CheckBoxGroup";
-import { checkBoxOnChange } from "../utilities/utilities";
+import { checkBoxOnChange, extractValues } from "../utilities/utilities";
 export default function Registration() {
   const history = useHistory();
   const [isDisabled, setisDisabled] = useState(true);
@@ -49,13 +50,9 @@ export default function Registration() {
     "chooseCategories"
   );
 
-  function extractValues(inputs) {
-    const sendData = {};
-    for (const key in inputs) {
-      sendData[key] = inputs[key].value;
-    }
-    return sendData;
-  }
+  useEffect(() => {
+    Aos.init({ duration: 1500 });
+  }, []);
 
   async function onsubmit(e) {
     e.preventDefault();
@@ -79,7 +76,7 @@ export default function Registration() {
   }
   const changeInput = inputOnChange(inputsValues, setInputsValues);
   return (
-    <Container fluid>
+    <Container fluid data-aos="fade-down">
       <Form className="form-register" onSubmit={(e) => onsubmit(e)}>
         <h3 className="mb-4">הירשם לאתר</h3>
         <InputTextInLine

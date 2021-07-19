@@ -59,12 +59,13 @@ export default function FilterCars({ checkBoxValues, updateCheckBoxSelected }) {
   return (
     <>
       <header
+        data-aos="fade-down"
         className="mx-auto"
         style={{ maxWidth: "1195px", marginBottom: "20px" }}
       >
         <h1>מודעות שפורסמו</h1>
         <div className="row sory-container">
-          <div className="col-sm-2">
+          <div className="col-md-2">
             <h5>
               הצג מודעות לפי{" "}
               <FontAwesomeIcon
@@ -76,7 +77,7 @@ export default function FilterCars({ checkBoxValues, updateCheckBoxSelected }) {
           </div>
 
           <ToggleButtonGroup
-            className=" col-sm-6 row sort-btn-container mr-2"
+            className=" col-md-6 row sort-btn-container mr-2"
             type="radio"
             name="sortBy"
             value={orderBy}
@@ -129,7 +130,7 @@ export default function FilterCars({ checkBoxValues, updateCheckBoxSelected }) {
 
         <CheckBoxGroup
           labelText="הצג רכבים מסוג"
-          checkBoxValues={checkBoxValues.chooseCategory.value}
+          checkBoxValues={checkBoxValues.chooseCategories.value}
           checkboxsValuesArr={[
             ["רכבים פרטיים", 1],
             ["אופנועים", 3],

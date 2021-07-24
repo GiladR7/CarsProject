@@ -1,4 +1,9 @@
-import { ToggleButtonGroup, ToggleButton } from "react-bootstrap";
+import {
+  ToggleButtonGroup,
+  ToggleButton,
+  OverlayTrigger,
+  Tooltip,
+} from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import CheckBoxGroup from "./CheckBoxGroup";
 import {
@@ -68,11 +73,22 @@ export default function FilterCars({ checkBoxValues, updateCheckBoxSelected }) {
           <div className="col-md-2">
             <h5>
               הצג מודעות לפי{" "}
-              <FontAwesomeIcon
-                style={{ fontSize: "22px", paddingRight: "4px" }}
-                icon={orderHeigher ? faSortAmountDownAlt : faSortAmountUpAlt}
-                onClick={() => setOrderHeigher(!orderHeigher)}
-              />
+              <OverlayTrigger
+                placement="bottom"
+                overlay={
+                  <Tooltip id="button-tooltip-2">סדר מיון עולה או יורד</Tooltip>
+                }
+              >
+                <FontAwesomeIcon
+                  style={{
+                    fontSize: "22px",
+                    paddingRight: "4px",
+                    cursor: "pointer",
+                  }}
+                  icon={orderHeigher ? faSortAmountDownAlt : faSortAmountUpAlt}
+                  onClick={() => setOrderHeigher(!orderHeigher)}
+                />
+              </OverlayTrigger>
             </h5>
           </div>
 
@@ -136,7 +152,7 @@ export default function FilterCars({ checkBoxValues, updateCheckBoxSelected }) {
             ["אופנועים", 3],
             ["ג'יפים", 4],
           ]}
-          name="chooseCategory"
+          name="chooseCategories"
           onChecked={updateCheckBoxSelected}
         />
       </header>

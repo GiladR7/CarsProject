@@ -1,5 +1,5 @@
 import { Container, Form, Button } from "react-bootstrap";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { useHistory } from "react-router";
 import Aos from "aos";
 import "aos/dist/aos.css";
@@ -8,6 +8,8 @@ import { validationFunc, inputOnChange } from "../utilities/validationsFunc";
 import InputTextInLine from "../Components/InputTextInLine";
 import CheckBoxGroup from "../Components/CheckBoxGroup";
 import { checkBoxOnChange, extractValues } from "../utilities/utilities";
+import { AdsContext } from "../Context/HomePageContext";
+
 export default function Registration() {
   const history = useHistory();
   const [isDisabled, setisDisabled] = useState(true);
@@ -39,6 +41,9 @@ export default function Registration() {
       errors: [],
     },
   });
+
+  const { message, setMessage } = useContext(AdsContext);
+
   const inputOnBlur = validationFunc(
     inputsValues,
     setInputsValues,
@@ -65,12 +70,15 @@ export default function Registration() {
     setServerError("");
 
     if (inputServerValidtion) {
-      console.log({ ...inputServerValidtion });
       setInputsValues({ ...inputServerValidtion });
     } else if (message) {
       setServerError(message);
       setisDisabled(true);
     } else if (status === "ok") {
+      setMessage(`נרשמת בהצלחה ${inputsValues.user.value}`);
+      setTimeout(() => {
+        setMessage("");
+      }, 4000);
       history.push("/"); //add register sucess page
     }
   }

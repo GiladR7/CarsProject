@@ -218,6 +218,7 @@ export async function getAdByID(adID) {
       ...rest
     },
   ] = data;
+
   const phone = `${codeArea}-${rest.phone}`;
   return {
     data: {

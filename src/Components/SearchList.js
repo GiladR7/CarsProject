@@ -29,7 +29,7 @@ export default function SearchList({
       {searchResults.map(({ [dataID]: id, [valueData]: value }) => {
         return (
           <ListGroup.Item
-            className="searchInput"
+            className="searchInput pointer"
             key={id}
             value={value}
             onClick={() => listItemClick(id, value)}

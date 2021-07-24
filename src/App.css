@@ -96,6 +96,12 @@ header .form-check-label {
   margin-top: 20px;
 }
 
+.regiser-message {
+  border-radius: 20px;
+  max-width: 1188px;
+  text-align: center;
+  margin: 0 auto;
+}
 .sort-btn-container {
   align-items: flex-start;
 }
@@ -154,6 +160,8 @@ label.btn.sortByBtn.active.btn-info {
   position: absolute;
   width: 100%;
   z-index: 10;
+  max-height: 99px;
+  overflow-y: scroll;
 }
 .searchInput {
   color: black;
@@ -464,7 +472,22 @@ header::before {
   font-size: 50px;
   text-align: center;
 }
+.pointer {
+  cursor: pointer;
+}
+.spinner-border {
+  padding: 100px;
+  font-size: 25px;
+  margin-bottom: 20px;
+  color: #a7b9cb;
+}
 
+.views-car {
+  position: absolute;
+  bottom: -10px;
+  z-index: 3;
+  right: 13px;
+}
 @media (max-width: 550px) {
   .header-like-ads h1,
   .my-ads h1 {
@@ -505,6 +528,12 @@ header::before {
   .about-car-container h5 {
     font-size: 16px;
   }
+  .title-nav {
+    font-size: 15px;
+  }
+  .data-item {
+    font-size: 14px;
+  }
 }
 
 @media (max-width: 350px) {
@@ -521,6 +550,9 @@ header::before {
     font-size: 10px;
   }
   .about-car-container h5 {
+    font-size: 12px;
+  }
+  .data-item {
     font-size: 12px;
   }
 }

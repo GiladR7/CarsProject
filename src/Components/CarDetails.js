@@ -7,6 +7,7 @@ import {
   faMoneyBillWave,
   faCalendarAlt,
   faMapMarkerAlt,
+  faEye,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { formatNumber } from "../utilities/utilities";
@@ -34,16 +35,17 @@ export default function CarDetails() {
     adDate: "",
     city: "",
     description: "",
+    views: "",
   });
   const { token } = cookies;
   useEffect(() => {
     Aos.init({ duration: 1500 });
   }, []);
   useEffect(() => {
-    if (token) {
-      andView(adID);
-    }
     async function fetchAdById() {
+      if (token) {
+        await andView(adID);
+      }
       const respone = await getAdByID(adID);
 
       if (respone.status === "ok") setAdData({ ...respone.data });
@@ -51,10 +53,10 @@ export default function CarDetails() {
     fetchAdById();
   }, [adID]);
   return (
-    <Container fluid className="mt-5 mb-3">
+    <Container fluid className="mt-5 mb-3" data-aos="flip-left">
       <div className="carDetials-container">
         <Row>
-          <Col md="6" data-aos="fade-left">
+          <Col md="6">
             <div className="img-car-page">
               {!adData.images.length && (
                 <p className="car-image-message">לא קיימת תמונה</p>
@@ -84,6 +86,18 @@ export default function CarDetails() {
                   {adData.adDate.split("T")[0].split("-").reverse().join("-")}
                 </p>
               </div>
+              <p className="data-item views-car">
+                {" "}
+                <FontAwesomeIcon
+                  icon={faEye}
+                  style={{
+                    paddingLeft: "2px",
+                    fontSize: "17px",
+                    color: "#2196f3",
+                  }}
+                />{" "}
+                {adData.views} צפיות
+              </p>
             </div>
             <ListGroup
               horizontal
@@ -119,7 +133,7 @@ export default function CarDetails() {
               </ListGroup.Item>
             </ListGroup>
           </Col>
-          <Col md="6" data-aos="fade-down">
+          <Col md="6">
             <div className="car-table-container">
               <Table borderless>
                 <thead>
@@ -158,11 +172,16 @@ export default function CarDetails() {
             </div>
           </Col>
         </Row>
-        <Row className="more-details-row" data-aos="fade-up">
+        <Row className="more-details-row">
           <Col md="6">
             <h2>פרטים נוספים</h2>
             <div className="about-car-container">
-              {adData.description && <p> {adData.description}</p>}
+              {adData.description && (
+                <p className="mb-0" style={{ wordBreak: "break-all" }}>
+                  {" "}
+                  {adData.description}
+                </p>
+              )}
               {!adData.description && (
                 <h5 className="text-center mb-0">לא צויינו פרטים נוספים</h5>
               )}
@@ -176,7 +195,7 @@ export default function CarDetails() {
                 histoy.push("/");
               }}
             >
-              חזרה לעמוד הקודם
+              לעמוד הראשי
             </Button>
           </Col>
         </Row>

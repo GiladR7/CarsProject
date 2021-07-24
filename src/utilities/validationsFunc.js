@@ -28,6 +28,14 @@ export function validationFunc(
       errors.push(validation[name].customError);
     }
 
+    if (
+      name === "password" &&
+      inputsValues.confirmPassword &&
+      inputsValues.confirmPassword.value
+    ) {
+      passwordConfirmValidtion(value, inputsValues);
+    }
+
     inputsValues[name].isValid = isValid;
     inputsValues[name].errors = errors;
     inputsValues[name].value = value;
@@ -44,6 +52,28 @@ export function validationFunc(
   };
 }
 
+function passwordConfirmValidtion(value, inputsValues) {
+  const errors = inputsValues.confirmPassword.errors.filter((value) => {
+    return value !== "סיסמא לא תואמת";
+  });
+
+  if (
+    validation.confirmPassword.funcValidation(
+      value,
+      inputsValues.confirmPassword.value
+    )
+  ) {
+    errors.push(validation.confirmPassword.customError);
+
+    inputsValues.confirmPassword.errors = errors;
+
+    inputsValues.confirmPassword.isValid = false;
+  } else {
+    inputsValues.confirmPassword.errors = errors;
+    if (!inputsValues.confirmPassword.errors.length)
+      inputsValues.confirmPassword.isValid = true;
+  }
+}
 function canSubmit(inputsValues, setisDisabled, chooseCategory = false) {
   for (const key in inputsValues) {
     const { value, errors } = inputsValues[key];
@@ -104,7 +134,9 @@ export function checkInputChangeBeforeSubmit(inputsValues, userDataFromLocal) {
 export async function tokenValidtion(history) {
   const data = await validToken();
   if (data.status !== "ok") {
-    history.push("/");
+    if (history) {
+      history.push("/");
+    }
     return false;
   }
   return true;

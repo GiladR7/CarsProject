@@ -1,4 +1,4 @@
-import { Container } from "react-bootstrap";
+import { Container, Spinner } from "react-bootstrap";
 import { faCar } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useEffect, useState } from "react";
@@ -11,6 +11,7 @@ import Aos from "aos";
 import "aos/dist/aos.css";
 
 export default function MyAds() {
+  const [spiner, setSpiner] = useState(true);
   const history = useHistory();
   const [myAds, setMyAds] = useState([]);
   const removeAd = (adId) => {
@@ -31,6 +32,7 @@ export default function MyAds() {
           setMyAds([...respone.data]);
         }
       }
+      setSpiner(false);
     }
 
     fetchMyAds();
@@ -43,9 +45,14 @@ export default function MyAds() {
         <FontAwesomeIcon icon={faCar} className="icon-myAds" />
       </div>
 
-      {!myAds.length && (
+      {!myAds.length && !spiner && (
         <div className="message-like-ads">
           <h2>עדיין לא העלאת אף מודעה</h2>
+        </div>
+      )}
+      {spiner && (
+        <div className="text-center">
+          <Spinner animation="border" role="status"></Spinner>
         </div>
       )}
 

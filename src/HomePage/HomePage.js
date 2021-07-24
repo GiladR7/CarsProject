@@ -1,14 +1,16 @@
 import { useContext, useEffect, useState } from "react";
-import { Container } from "react-bootstrap";
+import { Container, Alert } from "react-bootstrap";
 import { getAds, getIDsOfFaivoritesAds } from "../DAL/api";
 import CarItem from "../Components/CarItem";
 import { checkBoxOnChange } from "../utilities/utilities";
 import FilterCars from "../Components/FilterCars";
 import { AdsContext } from "../Context/HomePageContext";
+import { Spinner } from "react-bootstrap";
 import { updateUserCategories } from "../utilities/utilities";
 import Aos from "aos";
 import "aos/dist/aos.css";
 export default function HomePage({ setCountFavoritesAds, isLogIn }) {
+  const [spiner, setSpiner] = useState(true);
   const [ads, setAds] = useState([]);
   const {
     orderHeigher,
@@ -17,6 +19,7 @@ export default function HomePage({ setCountFavoritesAds, isLogIn }) {
     manufacturerFilter,
     checkBoxValues,
     setCheckBoxValues,
+    message,
   } = useContext(AdsContext);
 
   useEffect(() => {
@@ -33,6 +36,7 @@ export default function HomePage({ setCountFavoritesAds, isLogIn }) {
   }
   useEffect(() => {
     async function showAds() {
+      setSpiner(true);
       const manufacturerIDs = manufacturerFilter.map(({ manufacturerID }) => {
         return manufacturerID;
       });
@@ -52,6 +56,7 @@ export default function HomePage({ setCountFavoritesAds, isLogIn }) {
       } else {
         setAds([]);
       }
+      setSpiner(false);
     }
     showAds();
   }, [
@@ -89,6 +94,11 @@ export default function HomePage({ setCountFavoritesAds, isLogIn }) {
 
   return (
     <Container className="homep-page-container">
+      {message && (
+        <Alert data-aos="zoom-in" className="regiser-message" variant="success">
+          {message}
+        </Alert>
+      )}
       <FilterCars
         checkBoxValues={checkBoxValues}
         updateCheckBoxSelected={updateCheckBoxSelected}
@@ -109,12 +119,17 @@ export default function HomePage({ setCountFavoritesAds, isLogIn }) {
         })}
       </div>
 
-      {!ads.length && (
+      {!ads.length && !spiner && (
         <div
           className="message-like-ads"
           style={{ maxWidth: "1195px", margin: "0px auto" }}
         >
           <h2>לא נמצאו תוצאות</h2>
+        </div>
+      )}
+      {spiner && (
+        <div className="text-center">
+          <Spinner animation="border" role="status"></Spinner>
         </div>
       )}
     </Container>

@@ -24,16 +24,27 @@ import HomePage from "./HomePage/HomePage";
 import CarDetails from "../src/Components/CarDetails";
 import { useCookies } from "react-cookie";
 import { useTransition, animated } from "react-spring";
+import { tokenValidtion } from "./utilities/validationsFunc";
 
 function App() {
   const [showLogIng, setShowLogIn] = useState(false);
   const [isLogIn, setIsLogIn] = useState(false);
   const [cookies, setCookie] = useCookies(["token"]);
-  useEffect(() => {
-    const { token } = cookies;
+  const { token } = cookies;
+
+  async function checkIfLogIn() {
     if (token) {
-      setIsLogIn(true);
+      const logIn = await tokenValidtion();
+      if (logIn) {
+        setIsLogIn(true);
+      } else {
+        localStorage.clear();
+        setIsLogIn(false);
+      }
     }
+  }
+  useEffect(() => {
+    checkIfLogIn();
   }, []);
 
   function closePopUp() {

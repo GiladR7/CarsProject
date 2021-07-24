@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useHistory } from "react-router";
 
 import InputTextInLine from "../Components/InputTextInLine";
-import { updateUserDeatils } from "../DAL/api";
+import { updateUserDeatils, getUserDetails } from "../DAL/api";
 import {
   validationFunc,
   tokenValidtion,
@@ -42,31 +42,38 @@ export default function MyProfile() {
   const userDataFromLocal = JSON.parse(localStorage.getItem("currentUser"));
   const history = useHistory();
 
-  function setInputDataFromLocal() {
+  async function setInputDataFromLocal() {
     if (userDataFromLocal) {
       for (const key in userDetails) {
         userDetails[key].value = userDataFromLocal[key];
       }
-      return userDetails;
-    }
+      setInputsValues({ ...userDetails });
+    } else {
+      const userDetailsFromServer = await getUserDetails();
+      localStorage.setItem(
+        "currentUser",
+        JSON.stringify(userDetailsFromServer)
+      );
+      for (const key in userDetails) {
+        userDetails[key].value = userDetailsFromServer[key];
+      }
 
-    history.push("/");
-    return userDetails;
+      setInputsValues({ ...userDetails });
+    }
   }
 
   async function pageOnLoad() {
     const isLogIn = await tokenValidtion(history);
     if (isLogIn) {
-      setInputDataFromLocal();
+      return await setInputDataFromLocal();
     }
+    history.push("/");
   }
   useEffect(() => {
     pageOnLoad();
   }, []);
   const [isDisabled, setisDisabled] = useState(false);
-  const [inputsValues, setInputsValues] = useState(() => {
-    return setInputDataFromLocal();
-  });
+  const [inputsValues, setInputsValues] = useState(userDetails);
   const updateCheckBoxSelected = checkBoxOnChange(
     inputsValues,
     setInputsValues

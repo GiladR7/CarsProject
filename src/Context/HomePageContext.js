@@ -11,6 +11,7 @@ export function HomePageAdsProvider(props) {
   const [orderBy, setOrdetBy] = useState("adDate");
   const [manufacturerFilter, setManufacturerFilter] = useState([]);
   const [modelFilter, setModelFilter] = useState([]);
+  const [message, setMessage] = useState("");
 
   return (
     <AdsContext.Provider
@@ -25,6 +26,8 @@ export function HomePageAdsProvider(props) {
         setManufacturerFilter,
         checkBoxValues,
         setCheckBoxValues,
+        message,
+        setMessage,
       }}
     >
       {props.children}

@@ -276,6 +276,7 @@ export default function AddCarParse2() {
                 {inputsValues.city.cities.map((city, index) => {
                   return (
                     <ListGroup.Item
+                      className="pointer"
                       key={index}
                       onClick={() => {
                         inputsValues.city.cities = [];

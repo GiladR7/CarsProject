@@ -351,7 +351,7 @@ export default function EditCarAd() {
         />
         <div className="d-flex btn-parse2">
           <a className="btn btn-warning" onClick={() => histoy.goBack()}>
-            חזרה לעמוד הקודם
+            חזרה
           </a>
           <Button variant="primary" type="submit" disabled={isDisable}>
             עדכן מודעה

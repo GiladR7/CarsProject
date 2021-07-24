@@ -60,7 +60,7 @@ export default function CarItem({
     <div
       style={{ width: "19rem" }}
       className="card-car-container"
-      data-aos="zoom-in"
+      data-aos="fade-up"
     >
       <Card
         className="car-card"

@@ -80,9 +80,9 @@ export default function MyNavbar({
   return (
     <div style={{ backgroundColor: "#a7b9cb" }} className="main-nav">
       <Navbar className="nav-bar-main" collapseOnSelect expand="lg">
-        <Navbar.Brand className="ml-3">
-          {localData && <span>שלום , {localData.user}</span>}
+        <Navbar.Brand className="ml-3 title-nav">
           <FontAwesomeIcon
+            data-aos="slide-left"
             icon={faCarSide}
             className="car-main-icon"
             style={{
@@ -94,6 +94,7 @@ export default function MyNavbar({
               backgroundColor: "#a7b9cb",
             }}
           />{" "}
+          {localData && <span>שלום , {localData.user}</span>}
         </Navbar.Brand>
         <Navbar.Toggle aria-controls="responsive-navbar-nav" />
         <Navbar.Collapse id="responsive-navbar-nav">
@@ -158,6 +159,7 @@ export default function MyNavbar({
                 />
                 {!!numberOfFavorites && (
                   <Badge
+                    data-aos="zoom-out"
                     className="count-likes"
                     pill
                     variant="danger"

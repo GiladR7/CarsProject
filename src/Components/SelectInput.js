@@ -20,6 +20,7 @@ export default function SelectInput({
       <InputGroup hasValidation>
         <Form.Control
           as="select"
+          className="pointer"
           name={htmlFor}
           isInvalid={!valid}
           onChange={(e) => {
@@ -29,7 +30,7 @@ export default function SelectInput({
           value={value}
           disabled={isDisabled}
         >
-          <option value={defaultValue}>{defaultText}</option>
+          <option value={defaultValue}>{defaultText} </option>
           {optionSelect.map((value, index) => {
             return (
               <option key={index} value={value[valueKey]}>

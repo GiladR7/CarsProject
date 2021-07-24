@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Container } from "react-bootstrap";
+import { Container, Spinner } from "react-bootstrap";
 import { faHeart } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
@@ -10,6 +10,7 @@ import { useHistory } from "react-router";
 import Aos from "aos";
 import "aos/dist/aos.css";
 export default function FavoritesAdsPage({ setCountFavoritesAds }) {
+  const [spiner, setSpiner] = useState(true);
   const [myFavoriesAds, setMyFavoriesAds] = useState([]);
   const [adsIDs, setAdsIDs] = useState([]);
   const history = useHistory();
@@ -30,6 +31,7 @@ export default function FavoritesAdsPage({ setCountFavoritesAds }) {
 
   useEffect(() => {
     getFavorites();
+    setSpiner(false);
   }, []);
 
   useEffect(() => {
@@ -43,9 +45,14 @@ export default function FavoritesAdsPage({ setCountFavoritesAds }) {
         <FontAwesomeIcon icon={faHeart} />
       </div>
 
-      {!myFavoriesAds.length && (
+      {!myFavoriesAds.length && !spiner && (
         <div className="message-like-ads">
           <h2>לא הוספת מודעות לרשימה</h2>
+        </div>
+      )}
+      {spiner && (
+        <div className="text-center">
+          <Spinner animation="border" role="status"></Spinner>
         </div>
       )}
       <div className="d-flex flex-wrap  car-items-container">

@@ -20,18 +20,21 @@ export default function SearchInput({
   const searchInputOnChange = async (e) => {
     inputOnChange(e.target);
     const results = await getResultsApi(e.target.value, filterList);
-    if (e.target.value) {
-      setResults([...results]);
-    } else {
-      setResults([]);
-    }
+    setResults([...results]);
+    // if (e.target.value) {
+    //   setResults([...results]);
+    // } else {
+    //   setResults([]);
+    // }
   };
   return (
     <div className="serach-container mx-auto">
       <Form.Group>
         <div className="input-home-container">
           <FontAwesomeIcon icon={faSearch} className="filter-icon" />
+
           <Form.Control
+            onFocus={searchInputOnChange}
             onChange={searchInputOnChange}
             autoComplete="off"
             disabled={disabled}

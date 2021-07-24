@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTimes } from "@fortawesome/free-solid-svg-icons";
 import { logInCheck } from "./DAL/api";
 import { useState } from "react";
-import { validationFunc } from "./utilities/validationsFunc";
+import { validationFunc, inputOnChange } from "./utilities/validationsFunc";
 import { useHistory } from "react-router";
 
 export default function LogIn({ closePopUp, setIsLogIn }) {
@@ -13,12 +13,16 @@ export default function LogIn({ closePopUp, setIsLogIn }) {
     email: {
       value: "",
       isValid: true,
+      errors: [],
     },
     password: {
       value: "",
       isValid: true,
+      errors: [],
     },
   });
+
+  const onChange = inputOnChange(inputValues, setInputValues, setIsDisabled);
   const history = useHistory();
   const checkInput = validationFunc(inputValues, setInputValues, setIsDisabled);
   function onLogIn(e) {
@@ -56,9 +60,11 @@ export default function LogIn({ closePopUp, setIsLogIn }) {
               placeholder="הכנס איימיל"
               name="email"
               value={inputValues.email.value}
-              onChange={(e) => checkInput(e.target)}
+              onChange={(e) => onChange(e.target)}
+              onBlur={(e) => checkInput(e.target)}
               className={inputValues.email.isValid ? "" : "in-valid-data"}
             />
+            <p className="mb-2">{inputValues.email.errors[0]}</p>
           </Col>
           <Col md="5">
             <Form.Control
@@ -67,8 +73,10 @@ export default function LogIn({ closePopUp, setIsLogIn }) {
               name="password"
               className={inputValues.password.isValid ? "" : "in-valid-data"}
               value={inputValues.password.value}
-              onChange={(e) => checkInput(e.target)}
+              onChange={(e) => onChange(e.target)}
+              onBlur={(e) => checkInput(e.target)}
             />
+            <p className="mb-2">{inputValues.password.errors[0]}</p>
           </Col>
           <Col md="2">
             <Button variant="primary" type="submit" disabled={isDisabled}>
